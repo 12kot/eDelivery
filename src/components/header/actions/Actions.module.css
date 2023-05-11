@@ -1,0 +1,46 @@
+.container_actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+
+  margin: 0 2vh;
+  flex-grow: 1;
+}
+
+.action {
+  background-color: unset;
+  border: none;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  font-size: calc(1rem);
+}
+
+.action img {
+  max-width: 25px;
+  width: calc(2vw);
+  min-width: 20px;
+}
+
+.action p {
+  transition: 0.3s;
+  color: #52525b;
+}
+
+.action:hover p {
+  color: black;
+}
+
+@media screen and (max-width: 960px) {
+  .action {
+    font-size: 14px;
+  }
+  .action p {
+    margin-top: 4px;
+  }
+}
