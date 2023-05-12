@@ -9,12 +9,14 @@ const Categories = (): ReactElement => {
   const categories = useAppSelector((state) => state.app.categories);
 
   const getCategories = (): ReactElement[] => {
+    if (!categories.length) return [<Category category="Категории отсутсвуют" link="" key={v4()} />];
+    
     return categories.map((category: CategoryType) => (
-      <Category category={category.category} link={category.link} key={v4()} />
+      <Category {...category} key={v4()} />
     ));
   };
 
-  return <div className={styles.container}>{getCategories()}</div>;
+  return <span className={styles.container}>{getCategories()}</span>;
 };
 
 export default Categories;

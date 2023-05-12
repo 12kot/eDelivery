@@ -1,0 +1,23 @@
+.container {
+  margin: 24px 0 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.container h3 {
+  font-size: 1.6rem;
+}
+
+.products {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+
+  overflow: auto;
+}
+
+.products::-webkit-scrollbar {
+  display: none;
+}

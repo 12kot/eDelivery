@@ -5,7 +5,7 @@ import { CategoryType } from "types/types";
 
 const Category = (props: CategoryType): ReactElement => {
   return (
-    <NavLink to={`/category/${props.link}`} className={styles.container}>
+    <NavLink to={`/${props.link}`} className={styles.container}>
       {props.category}
     </NavLink>
   );

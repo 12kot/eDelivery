@@ -7,7 +7,7 @@ const Head = (): ReactElement => {
   return (
     <header className={styles.header}>
       <div className={styles.container}>
-        <NavLink to="/" className={`${styles.logo} ${styles.item}`}>
+        <NavLink to="/" className={`${styles.logo}`}>
           <h2>LOGO</h2>
         </NavLink>
         <div className={`${styles.container_catalog}`}>

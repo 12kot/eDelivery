@@ -1,0 +1,10 @@
+.container {
+    margin: 24px 0 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: calc(8rem + 8vw);
+}

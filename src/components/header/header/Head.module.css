@@ -12,16 +12,13 @@
 
 .container {
   height: 100%;
-  margin: 0 8vh;
+  margin: 0 12vw;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   font-size: 1rem;
 }
 
 .logo {
-  flex-grow: 0.2;
-  width: fit-content;
   letter-spacing: 2px;
 
   background-color: unset;
@@ -79,7 +76,7 @@
 }
 
 .container_actions {
-  flex-grow: 1.5;
+  flex-grow: 0.5;
 }
 
 .item {
@@ -92,7 +89,7 @@
   }
 
   .logo {
-    margin: 0 2px 0 2vh;
+    margin: 0 2px 0 2vw;
     flex-grow: 1;
   }
 
@@ -106,7 +103,7 @@
 
   .search {
     width: 100%;
-    margin: 0 2vh 0 2px;
+    margin: 0 2vw 0 2px;
   }
 
   .container_actions {
