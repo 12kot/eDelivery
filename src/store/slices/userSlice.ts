@@ -6,9 +6,9 @@ const userSlice = createSlice({
     name: "user",
     initialState,
     reducers: {
-        func(state, action: PayloadAction<string>){}
+        func(state, action: PayloadAction<string>) { }
     }
-})
+});
 
 export const {func} = userSlice.actions;
 export default userSlice;
