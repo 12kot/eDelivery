@@ -22,7 +22,7 @@ const Products = (props: Props): ReactElement => {
   const getProducts = (): ReactElement[] => {
     if (props.products)
       return props.products.map((product) => (
-        <SwiperSlide>
+        <SwiperSlide  key={v4()}>
           <Product {...product} key={v4()} />
         </SwiperSlide>
       ));
