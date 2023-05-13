@@ -4,13 +4,13 @@ import Product from "./product/Product";
 import { ProductType } from "types/types";
 import { v4 } from "uuid";
 
-import { Mousewheel, FreeMode } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperSettings from "swiper";
+// import { Mousewheel, FreeMode } from "swiper";
+// import { Swiper, SwiperSlide } from "swiper/react";
+// import SwiperSettings from "swiper";
 
-import "swiper/css";
-import "swiper/css/mousewheel";
-import "swiper/swiper.min.css";
+// import "swiper/css";
+// import "swiper/css/mousewheel";
+// import "swiper/swiper.min.css";
 
 type Props = {
   heading: string;
@@ -22,51 +22,51 @@ const Products = (props: Props): ReactElement => {
   const getProducts = (): ReactElement[] => {
     if (props.products)
       return props.products.map((product) => (
-        <SwiperSlide  key={v4()}>
+       // <SwiperSlide  key={v4()}>
           <Product {...product} key={v4()} />
-        </SwiperSlide>
+      //  </SwiperSlide>
       ));
 
     return [<></>];
   };
 
-  new SwiperSettings(".swiper1", {
-    slidesPerView: 2,
-    spaceBetween: 30,
+  // new SwiperSettings(".swiper", {
+  //   slidesPerView: 2,
+  //   spaceBetween: 30,
 
-    breakpoints: {
-      320: {
-        slidesPerView: 2,
-      },
-      480: {
-        slidesPerView: 2.5,
-      },
-      640: {
-        slidesPerView: 3,
-      },
-      800: {
-        slidesPerView: 3.5,
-      },
-      960: {
-        slidesPerView: 3,
-      },
-      1120: {
-        slidesPerView: 3.5,
-      },
-      1280: {
-        slidesPerView: 4,
-      },
-      1440: {
-        slidesPerView: 4.5,
-      },
-      1600: {
-        slidesPerView: 5,
-      },
-      1760: {
-        slidesPerView: 5.5,
-      },
-    },
-  });
+  //   breakpoints: {
+  //     120: {
+  //       slidesPerView: 2,
+  //     },
+  //     480: {
+  //       slidesPerView: 2.5,
+  //     },
+  //     640: {
+  //       slidesPerView: 3,
+  //     },
+  //     800: {
+  //       slidesPerView: 3.5,
+  //     },
+  //     960: {
+  //       slidesPerView: 3,
+  //     },
+  //     1120: {
+  //       slidesPerView: 3.5,
+  //     },
+  //     1280: {
+  //       slidesPerView: 4,
+  //     },
+  //     1440: {
+  //       slidesPerView: 4.5,
+  //     },
+  //     1600: {
+  //       slidesPerView: 5,
+  //     },
+  //     1760: {
+  //       slidesPerView: 5.5,
+  //     },
+  //   },
+  // });
 
   return (
     <>
@@ -74,15 +74,14 @@ const Products = (props: Props): ReactElement => {
         <div className={styles.container}>
           <h3>{props.heading}</h3>
           <div className={`${styles.products}`}>
-            <Swiper
-              className="swiper1"
+            {/* <Swiper
+              className="swiper"
               modules={[Mousewheel, FreeMode]}
               cssMode={true}
               mousewheel={true}
-              freeMode={true}
-            >
+            > */}
               {getProducts()}
-            </Swiper>
+            {/* </Swiper> */}
           </div>
         </div>
       ) : (
