@@ -1,20 +1,15 @@
-import { BannerType, ProductType } from "./../../types/types";
+import {
+  BannerType,
+  ProductCategoriesType,
+  ProductType,
+} from "./../../types/types";
 import { CategoryType } from "types/types";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 type AppType = {
   categories: CategoryType[];
-  products: ProductType[];
-  /* 
-  products: {
-    milk: {},
-    drinks: {},
-    fruits: {},
-    ...
-    vegetables: {},
-  }
-  */
   banners: BannerType[];
+  products: ProductCategoriesType;
 };
 
 const initialState: AppType = {
@@ -28,70 +23,10 @@ const initialState: AppType = {
     { category: "Детское питание", link: "category/child" },
     { category: "Молочные продукты", link: "category/milk" },
   ],
-  products: [
-    {
-      name: "string",
-      id: 1,
-      price: 1,
-      description: "Lormmy tenturies, ",
-      composition: "string",
-      quantity: 1,
-      imageURL: "https://api.e-dostavka.by/UserFiles/images/catalog/Goods/4210/01794210/norm/01794210.n_1.png",
-      category: "string",
-      location: "Belarus",
-    },
-    {
-      name: "string",
-      id: 1,
-      price: 1,
-      description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, ",
-      composition: "string",
-      quantity: 1,
-      imageURL: "https://api.e-dostavka.by/UserFiles/images/catalog/Goods/4210/01794210/norm/01794210.n_1.png",
-      category: "string",
-      location: "Belarus",
-    },{
-      name: "string",
-      id: 1,
-      price: 1,
-      description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, ",
-      composition: "string",
-      quantity: 1,
-      imageURL: "https://api.e-dostavka.by/UserFiles/images/catalog/Goods/4210/01794210/norm/01794210.n_1.png",
-      category: "string",
-      location: "Belarus",
-    },{
-      name: "string",
-      id: 1,
-      price: 1,
-      description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, ",
-      composition: "string",
-      quantity: 1,
-      imageURL: "https://api.e-dostavka.by/UserFiles/images/catalog/Goods/4210/01794210/norm/01794210.n_1.png",
-      category: "string",
-      location: "Belarus",
-    },{
-      name: "string",
-      id: 1,
-      price: 1,
-      description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, ",
-      composition: "string",
-      quantity: 1,
-      imageURL: "https://api.e-dostavka.by/UserFiles/images/catalog/Goods/4210/01794210/norm/01794210.n_1.png",
-      category: "string",
-      location: "Belarus",
-    },{
-      name: "string",
-      id: 1,
-      price: 1,
-      description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, ",
-      composition: "string",
-      quantity: 1,
-      imageURL: "https://api.e-dostavka.by/UserFiles/images/catalog/Goods/4210/01794210/norm/01794210.n_1.png",
-      category: "string",
-      location: "Belarus",
-    },
-  ],
+  products: {
+   products: []
+  },
+
   banners: [],
 };
 
@@ -105,11 +40,12 @@ const appSlice = createSlice({
     setBanners(state, action: PayloadAction<BannerType[]>) {
       state.banners = action.payload;
     },
-    setProducts(state, action: PayloadAction<ProductType[]>) {
-      state.products = action.payload;
+    setProductCategory(state, action: PayloadAction<ProductType[]>) {
+      state.products.products = action.payload;
+      state.products.milk = action.payload;
     },
   },
 });
 
-export const { setCategories, setBanners, setProducts } = appSlice.actions;
+export const { setCategories, setBanners, setProductCategory } = appSlice.actions;
 export default appSlice;

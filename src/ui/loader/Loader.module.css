@@ -1,3 +1,12 @@
+.container {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    position: fixed;
+    background-color: #ffffff62;
+}
+
 .loader {
     position: relative;
     width: 2.5em;

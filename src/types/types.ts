@@ -13,7 +13,18 @@ export type ProductType = {
   imageURL: string,
   category: string,
   location: string,
+  brand: string,
 };
+
+export type ProductCategoriesType = {
+  products: ProductType[],
+  milk?: ProductType[],
+  fruits?: ProductType[],
+  vegetables?: ProductType[],
+  discounds?: ProductType[],
+  drinks?: ProductType[],
+  meet?: ProductType[],
+}
 
 export type BannerType = {
   imageURL: string,

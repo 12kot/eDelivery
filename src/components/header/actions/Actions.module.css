@@ -18,7 +18,7 @@
   align-items: center;
   justify-content: center;
 
-  font-size: calc(1rem);
+  font-size: calc(0.9rem);
 }
 
 .action img {
@@ -42,7 +42,7 @@
   }
 
   .action {
-    font-size: 14px;
+    font-size: 12px;
   }
   .action p {
     margin-top: 4px;

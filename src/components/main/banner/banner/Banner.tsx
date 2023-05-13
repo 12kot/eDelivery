@@ -6,13 +6,13 @@ import { BannerType } from "types/types";
 
 const Banner = (props: BannerType): ReactElement => {
   const getPath = () => {
-      if (props.imageURL.startsWith("https://")) return props.imageURL;
-      
-      try {
-          return require(`images/banners/${props.imageURL}`);
-      } catch {
-          return require(defaultBanner);
-      }
+    if (props.imageURL.startsWith("https://")) return props.imageURL;
+
+    try {
+      return require(`images/banners/${props.imageURL}`);
+    } catch {
+      return defaultBanner;
+    }
   };
 
   return (

@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 
 const Product = (props: ProductType): ReactElement => {
   return (
-    <NavLink to={`/product/${props.id}`} className={styles.container}>
+    <NavLink to={`/category/${props.category}/${props.id}`} className={styles.container}>
       <img src={props.imageURL} alt={props.name} />
       <div className={styles.content}>
         <h4>{props.price} р.</h4>

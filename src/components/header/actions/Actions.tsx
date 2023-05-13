@@ -14,7 +14,7 @@ type Props = {
 
 const Actions = (props: Props): ReactElement => {
   return (
-    <div className={styles.container_actions}>
+    <nav className={styles.container_actions}>
       {!props.isFooter ? (
         <></>
       ) : (
@@ -43,7 +43,7 @@ const Actions = (props: Props): ReactElement => {
           <p>Корзина</p>
         
       </NavLink>
-    </div>
+    </nav>
   );
 };
 
