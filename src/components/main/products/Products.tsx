@@ -29,7 +29,7 @@ const Products = (props: Props): ReactElement => {
     return [<></>];
   };
 
-  const swiperSettings = new SwipperSettings(".swiper", {
+  new SwipperSettings(".swiper", {
     slidesPerView: 1,
     spaceBetween: 30,
 
