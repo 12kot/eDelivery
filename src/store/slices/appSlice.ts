@@ -13,16 +13,7 @@ type AppType = {
 };
 
 const initialState: AppType = {
-  categories: [
-    { category: "Акции", link: "actions" },
-    { category: "Скидки", link: "sales" },
-    { category: "Напитки", link: "category/drinks" },
-    { category: "Фрукты", link: "category/fruits" },
-    { category: "Овощи", link: "category/vegetables" },
-    { category: "Бакалея", link: "category/Grocery" },
-    { category: "Детское питание", link: "category/child" },
-    { category: "Молочные продукты", link: "category/milk" },
-  ],
+  categories: [],
   products: {
    products: []
   },

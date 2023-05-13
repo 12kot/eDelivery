@@ -4,10 +4,10 @@ import Banner from "./banner/Banners";
 import Categories from "./categories/Categories";
 import Products from "./products/Products";
 import { useAppDispatch, useAppSelector } from "hooks/hooks";
-import getData from "API/realtimeDB/getCategoryData";
-import { setProductCategory } from "store/slices/appSlice";
-import { ProductType } from "types/types";
+import { setCategories, setProductCategory } from "store/slices/appSlice";
+import { CategoryType, ProductType } from "types/types";
 import Loader from "ui/loader/Loader";
+import getCategoryData from "API/realtimeDB/getCategoryData";
 
 const Main = (): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
@@ -16,7 +16,10 @@ const Main = (): ReactElement => {
 
   useEffect(() => {
     const get = async () => {
-      const data: ProductType[] | undefined = await getData("products");
+      const categories: CategoryType[] | undefined = await getCategoryData("categories");
+      if (categories) dispatch(setCategories(categories));
+
+      const data: ProductType[] | undefined = await getCategoryData("products/products");
       if (data) dispatch(setProductCategory(data));
       setIsLoading(false);
     };
@@ -24,7 +27,6 @@ const Main = (): ReactElement => {
     get();
   }, [dispatch]);
 
-  console.log(isLoading);
   return (
     <div className={styles.container}>
       {isLoading ? (

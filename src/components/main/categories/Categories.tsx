@@ -16,7 +16,7 @@ const Categories = (): ReactElement => {
     ));
   };
 
-  return <span className={styles.container}>{getCategories()}</span>;
+  return <div className={styles.container}>{getCategories()}</div>;
 };
 
 export default Categories;

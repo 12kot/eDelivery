@@ -1,11 +1,10 @@
 import { getDatabase, ref, child, get } from "firebase/database";
-import { ProductType } from "types/types";
 
-const getCategoryData = async (category: string): Promise<ProductType[] | undefined> => {
-  let data: ProductType[] | undefined;
+const getDataDB = async <T>(path: string): Promise<T | undefined> => {
+  let data: T | undefined;
   const dbRef = ref(getDatabase());
 
-  await get(child(dbRef, `products/${category}`)).then((snapshot) => {
+  await get(child(dbRef, `${path}`)).then((snapshot) => {
     if (snapshot.exists()) {
       data = snapshot.val();
     } else {
@@ -19,4 +18,4 @@ const getCategoryData = async (category: string): Promise<ProductType[] | undefi
   return data;
 };
 
-export default getCategoryData;
+export default getDataDB;

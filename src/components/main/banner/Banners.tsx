@@ -10,10 +10,12 @@ const Banners = (): ReactElement => {
 
   const getBanners = (): ReactElement[] => {
     if (!banners.length)
-      return [<Banner imageURL="default.jpg" link="" key={v4()} />];
+      return [
+          <Banner imageURL="default.jpg" link="" key={v4()} />
+      ];
 
     return banners.map((banner: BannerType) => (
-      <Banner {...banner} key={v4()} />
+        <Banner {...banner} key={v4()} />
     ));
   };
 

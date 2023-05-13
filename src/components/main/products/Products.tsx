@@ -6,7 +6,7 @@ import { v4 } from "uuid";
 
 import { Mousewheel, FreeMode } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
-import SwipperSettings from "swiper";
+import SwiperSettings from "swiper";
 
 import "swiper/css";
 import "swiper/css/mousewheel";
@@ -18,6 +18,7 @@ type Props = {
 };
 
 const Products = (props: Props): ReactElement => {
+  
   const getProducts = (): ReactElement[] => {
     if (props.products)
       return props.products.map((product) => (
@@ -29,8 +30,8 @@ const Products = (props: Props): ReactElement => {
     return [<></>];
   };
 
-  new SwipperSettings(".swiper", {
-    slidesPerView: 1,
+  new SwiperSettings(".swiper1", {
+    slidesPerView: 2,
     spaceBetween: 30,
 
     breakpoints: {
@@ -72,12 +73,13 @@ const Products = (props: Props): ReactElement => {
       {props.products ? (
         <div className={styles.container}>
           <h3>{props.heading}</h3>
-          <div className={styles.products}>
+          <div className={`${styles.products}`}>
             <Swiper
+              className="swiper1"
               modules={[Mousewheel, FreeMode]}
-              slidesPerView={"auto"}
-              freeMode={true}
+              cssMode={true}
               mousewheel={true}
+              freeMode={true}
             >
               {getProducts()}
             </Swiper>
