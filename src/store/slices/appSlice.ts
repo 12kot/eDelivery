@@ -37,7 +37,7 @@ export const fetchData = createAsyncThunk<void, { path: string; type: string }>(
           dispatch(setCategories(data));
           break;
         case "SET_ALL_PRODUCTS":
-          dispatch(setProducts(data));
+          dispatch(setProducts(Object.values(data)));
           break;
         case "SET_PRODUCT":
           dispatch(setCurrentProduct(data));

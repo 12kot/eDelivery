@@ -20,12 +20,12 @@ type Props = {
 const ProductsSwiper = (props: Props): ReactElement => {
   
   const getProducts = (): ReactElement[] => {
-    if (props.products)
+    if (props.products) {
       return props.products.map((product) => (
        // <SwiperSlide  key={v4()}>
           <Product {...product} key={v4()} />
       //  </SwiperSlide>
-      ));
+      ));}
 
     return [<></>];
   };

@@ -108,9 +108,13 @@
   transform: scale(0.95);
 }
 
+.mobile_menu {
+  display: none;
+}
+
 @media screen and (max-width: 960px) {
   .container {
-    padding: 0 0 10vh 0;
+    padding: 0 0 17vh 0;
   }
   .content {
     flex-direction: column;
@@ -118,8 +122,8 @@
   }
 
   .content img {
-    min-width: 40%;
-    max-width: 55%;
+    min-width: 65%;
+    max-width: 70%;
   }
 
   .description {
@@ -136,5 +140,71 @@
 
   .basket .button {
     display: none;
+  }
+
+  .mobile_menu {
+    align-self: center;
+    width: 90%;
+    height: 45px;
+    background-color: white;
+
+    position: fixed;
+    bottom: 65px;
+    z-index: 4000;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1rem;
+  }
+
+  .mobile_menu .mobile_basket {
+    flex-grow: 8;
+    height: 100%;
+  }
+
+  .mobile_menu .mobile_basket button {
+    background-color: #02b875;
+    border: none;
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    font-size: 1rem;
+    transition: 0.3s;
+  }
+  
+  .mobile_menu .mobile_heart {
+    opacity: 0.8;
+    height: 100%;
+    flex-grow: 1;
+  }
+  
+  .mobile_menu .mobile_heart button {
+    background-color: rgba(128, 128, 0, 0);
+    border: none;
+    height: 100%;
+    width: 100%;
+    transition: 0.3s;
+  }
+
+  .mobile_menu .mobile_heart img {
+    max-width: 25px;
+  }
+
+  .mobile_menu .mobile_basket button:hover {
+    background-color: hsl(158, 99%, 32%);
+  }
+
+  .mobile_menu .mobile_basket button:active {
+    background-color: hsl(158, 100%, 7%);
+    transform: scale(0.99);
+  }
+
+  .mobile_menu .mobile_heart button:hover {
+    opacity: 1;
+  }
+
+  .mobile_menu .mobile_heart button:active {
+    background-color: #ebebee;
   }
 }

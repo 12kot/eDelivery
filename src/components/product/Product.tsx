@@ -74,6 +74,18 @@ const Product = (): ReactElement => {
                 heading="Подобока похожих товаров"
                 products={products}
               />
+              <div className={styles.mobile_menu}>
+                <div className={styles.mobile_basket}>
+                  <button>
+                    Добавить в корзину
+                  </button>
+                </div>
+                <div className={styles.mobile_heart}>
+                  <button>
+                    <img src={heartIcon} alt="heart" />
+                  </button>
+                </div>
+              </div>
             </>
           ) : (
             <h2>Продукт не найден</h2>

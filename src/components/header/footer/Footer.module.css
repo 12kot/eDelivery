@@ -16,8 +16,7 @@
 }
 
 @media screen and (min-width: 960px) {
-    .footer {
-        display: none;
-    }
+  .footer {
+    display: none;
+  }
 }
-

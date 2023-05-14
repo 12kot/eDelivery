@@ -9,6 +9,7 @@
 }
 
 .action {
+  height: 100%;
   background-color: unset;
   border: none;
   padding: 0;
@@ -16,7 +17,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
 
   font-size: calc(0.9rem);
 }
@@ -34,6 +34,10 @@
 
 .action:hover p {
   color: black;
+}
+
+.action:active p {
+  color: #02b875;
 }
 
 @media screen and (max-width: 960px) {
