@@ -1,30 +1,19 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useEffect } from "react";
 import styles from "./Main.module.css";
 import Banner from "./banner/Banners";
 import Categories from "./categories/Categories";
-import Products from "./products/Products";
+import ProductsSwiper from "./products/ProductsSwiper";
 import { useAppDispatch, useAppSelector } from "hooks/hooks";
-import { setCategories, setProductCategory } from "store/slices/appSlice";
-import { CategoryType, ProductType } from "types/types";
+import { fetchData } from "store/slices/appSlice";
 import Loader from "ui/loader/Loader";
-import getCategoryData from "API/realtimeDB/getCategoryData";
 
 const Main = (): ReactElement => {
-  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useAppDispatch();
-  const products = useAppSelector((state) => state.app.products);
+  const {products, isLoading} = useAppSelector((state) => state.app);
 
   useEffect(() => {
-    const get = async () => {
-      const categories: CategoryType[] | undefined = await getCategoryData("categories");
-      if (categories) dispatch(setCategories(categories));
-
-      const data: ProductType[] | undefined = await getCategoryData("products/products");
-      if (data) dispatch(setProductCategory(data));
-      setIsLoading(false);
-    };
-
-    get();
+    dispatch(fetchData({path: "categories", type: "SET_CATEGORIES"}));
+    dispatch(fetchData({path: "products/products", type: "SET_ALL_PRODUCTS"}));
   }, [dispatch]);
 
   return (
@@ -35,8 +24,8 @@ const Main = (): ReactElement => {
         <>
           <Categories />
           <Banner />
-          <Products heading="Рекомендуем" products={products.products} />
-          <Products heading="Низкие цены!" products={products.milk} />
+          <ProductsSwiper heading="Рекомендуем" products={products.products} />
+          <ProductsSwiper heading="Низкие цены!" products={products.products} />
         </>
       )}
     </div>

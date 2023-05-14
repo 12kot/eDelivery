@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import styles from "./Product.module.css";
+import styles from "./ProductItem.module.css";
 import { ProductType } from "types/types";
 import { NavLink } from "react-router-dom";
 

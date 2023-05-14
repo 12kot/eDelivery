@@ -18,12 +18,6 @@ export type ProductType = {
 
 export type ProductCategoriesType = {
   products: ProductType[],
-  milk?: ProductType[],
-  fruits?: ProductType[],
-  vegetables?: ProductType[],
-  discounds?: ProductType[],
-  drinks?: ProductType[],
-  meet?: ProductType[],
 }
 
 export type BannerType = {

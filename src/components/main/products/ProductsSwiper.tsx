@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
-import styles from "./Products.module.css";
-import Product from "./product/Product";
+import styles from "./ProductsSwiper.module.css";
+import Product from "./productItem/ProductItem";
 import { ProductType } from "types/types";
 import { v4 } from "uuid";
 
@@ -17,7 +17,7 @@ type Props = {
   products: ProductType[] | undefined;
 };
 
-const Products = (props: Props): ReactElement => {
+const ProductsSwiper = (props: Props): ReactElement => {
   
   const getProducts = (): ReactElement[] => {
     if (props.products)
@@ -91,4 +91,4 @@ const Products = (props: Props): ReactElement => {
   );
 };
 
-export default Products;
+export default ProductsSwiper;
