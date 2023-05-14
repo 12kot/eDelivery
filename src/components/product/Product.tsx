@@ -41,11 +41,15 @@ const Product = (): ReactElement => {
                     <p>{currentProduct.description}</p>
                   </div>
                   <div className={styles.item}>
-                    <h4>Страна производитель: </h4>
+                    <h4>Страна производитель </h4>
                     <p>{currentProduct.location}</p>
                   </div>
                   <div className={styles.item}>
-                    <h4>Артикул: </h4>
+                    <h4>Производитель </h4>
+                    <p>{currentProduct.brand}</p>
+                  </div>
+                  <div className={styles.item}>
+                    <h4>Артикул </h4>
                     <p>{currentProduct.id}</p>
                   </div>
                 </div>
