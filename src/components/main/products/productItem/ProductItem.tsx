@@ -4,10 +4,12 @@ import { ProductType } from "types/types";
 import { NavLink } from "react-router-dom";
 
 const Product = (props: ProductType): ReactElement => {
+  console.log(props)
+  debugger
   return (
     <NavLink to={`/category/${props.category}/${props.id}`} className={styles.container}>
       <img src={props.imageURL} alt={props.name} />
-      <div className={styles.content}>
+      <div className={props.isDiscount ? `${styles.content} ${styles.discount}` : `${styles.content}`}>
         <h4>{props.price} р.</h4>
 
         <p className={styles.description}>{props.name}</p>

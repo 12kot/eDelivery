@@ -83,6 +83,10 @@
   padding-left: 24px;
 }
 
+.discount h2 {
+  color: red;
+}
+
 .basket .button {
   margin: 24px 0 0;
   padding: 0 24px;

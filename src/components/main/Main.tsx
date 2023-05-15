@@ -6,6 +6,7 @@ import ProductsSwiper from "./products/ProductsSwiper";
 import { useAppDispatch, useAppSelector } from "hooks/hooks";
 import { fetchData } from "store/slices/appSlice";
 import Loader from "ui/loader/Loader";
+import { ProductType } from "types/types";
 
 const Main = (): ReactElement => {
   const dispatch = useAppDispatch();
@@ -16,6 +17,10 @@ const Main = (): ReactElement => {
     dispatch(fetchData({path: "products/products", type: "SET_ALL_PRODUCTS"}));
   }, [dispatch]);
 
+  const getDiscountProducs = (): ProductType[] => {
+    return products.products.filter((product) => product.isDiscount);
+  }
+
   return (
     <div className={styles.container}>
       {isLoading ? (
@@ -25,7 +30,7 @@ const Main = (): ReactElement => {
           <Categories />
           <Banner />
           <ProductsSwiper heading="Рекомендуем" products={products.products} />
-          <ProductsSwiper heading="Низкие цены!" products={products.products} />
+          <ProductsSwiper heading="Низкие цены!" products={getDiscountProducs()} />
         </>
       )}
     </div>

@@ -36,6 +36,10 @@
   padding-top: 4px;
 }
 
+.discount h4 {
+  color: red;
+}
+
 .description {
   display: inline-block;
   padding-top: 4px;

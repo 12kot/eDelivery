@@ -4,6 +4,7 @@ export type CategoryType = {
 };
 
 export type ProductType = {
+  isDiscount: boolean,
   name: string, 
   id: number,
   price: number,
