@@ -62,7 +62,7 @@ const Product = (): ReactElement => {
                     </button>
                   </div>
 
-                    <div className={currentProduct.isDiscount ? `${styles.basket} ${styles.discount}` : `${styles.content}`}>
+                    <div className={currentProduct.isDiscount ? `${styles.basket} ${styles.discount}` : `${styles.basket}`}>
                     <h2>{currentProduct.price} р.</h2>
                     <div className={styles.button}>
                       <button>В корзину</button>
