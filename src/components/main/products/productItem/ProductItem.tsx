@@ -3,9 +3,7 @@ import styles from "./ProductItem.module.css";
 import { ProductType } from "types/types";
 import { NavLink } from "react-router-dom";
 
-const Product = (props: ProductType): ReactElement => {
-  console.log(props)
-  debugger
+const ProductItem = (props: ProductType): ReactElement => {
   return (
     <NavLink to={`/category/${props.category}/${props.id}`} className={styles.container}>
       <img src={props.imageURL} alt={props.name} />
@@ -20,4 +18,4 @@ const Product = (props: ProductType): ReactElement => {
   );
 };
 
-export default Product;
+export default ProductItem;

@@ -1,9 +1,9 @@
 import React, { ReactElement } from "react";
-import styles from "./Category.module.css";
+import styles from "./CategoryItem.module.css";
 import { NavLink } from "react-router-dom";
 import { CategoryType } from "types/types";
 
-const Category = (props: CategoryType): ReactElement => {
+const CategoryIyem = (props: CategoryType): ReactElement => {
   return (
     <NavLink to={`/${props.link}`} className={styles.container}>
       {props.category}
@@ -11,4 +11,4 @@ const Category = (props: CategoryType): ReactElement => {
   );
 };
 
-export default Category;
+export default CategoryIyem;

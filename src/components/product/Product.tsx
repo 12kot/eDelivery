@@ -2,7 +2,7 @@ import React, { ReactElement, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styles from "./Product.module.css";
 import { useAppDispatch, useAppSelector } from "hooks/hooks";
-import { fetchData } from "store/slices/appSlice";
+import { fetchProductData, fetchCollectionProductsData } from "store/slices/appSlice";
 import Loader from "ui/loader/Loader";
 import heartIcon from "images/icons/heart.png";
 import ProductsSwiper from "components/main/products/ProductsSwiper";
@@ -13,15 +13,10 @@ const Product = (): ReactElement => {
 
   const { currentProduct, isLoading } = useAppSelector((state) => state.app);
   const products = useAppSelector((state) => state.app.products.products);
-  console.log(products);
 
   useEffect(() => {
-    dispatch(
-      fetchData({ path: `products/${category}/${id}`, type: "SET_PRODUCT" })
-    );
-    dispatch(
-      fetchData({ path: `products/${category}`, type: "SET_ALL_PRODUCTS" })
-    );
+    if (id) dispatch(fetchProductData({ id: id }));
+    if (category) dispatch(fetchCollectionProductsData({category: category }));
   }, [category, id]);
 
   return (
@@ -62,7 +57,13 @@ const Product = (): ReactElement => {
                     </button>
                   </div>
 
-                    <div className={currentProduct.isDiscount ? `${styles.basket} ${styles.discount}` : `${styles.basket}`}>
+                  <div
+                    className={
+                      currentProduct.isDiscount
+                        ? `${styles.basket} ${styles.discount}`
+                        : `${styles.basket}`
+                    }
+                  >
                     <h2>{currentProduct.price} р.</h2>
                     <div className={styles.button}>
                       <button>В корзину</button>

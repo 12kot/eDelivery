@@ -4,21 +4,21 @@ import Banner from "./banner/Banners";
 import Categories from "./categories/Categories";
 import ProductsSwiper from "./products/ProductsSwiper";
 import { useAppDispatch, useAppSelector } from "hooks/hooks";
-import { fetchData } from "store/slices/appSlice";
+import { fetchCollectionProductsData, fetchCollectionCategoriesData } from "store/slices/appSlice";
 import Loader from "ui/loader/Loader";
 import { ProductType } from "types/types";
 
 const Main = (): ReactElement => {
   const dispatch = useAppDispatch();
-  const {products, isLoading} = useAppSelector((state) => state.app);
+  const { products, isLoading } = useAppSelector((state) => state.app);
 
   useEffect(() => {
-    dispatch(fetchData({path: "categories", type: "SET_CATEGORIES"}));
-    dispatch(fetchData({path: "products/products", type: "SET_ALL_PRODUCTS"}));
+    dispatch(fetchCollectionCategoriesData());
+    dispatch(fetchCollectionProductsData ({category: null}));
   }, [dispatch]);
 
   const getDiscountProducs = (): ProductType[] => {
-    return products.products.filter((product) => product.isDiscount);
+      return products.products.filter((product: ProductType) => product.isDiscount);
   }
 
   return (
