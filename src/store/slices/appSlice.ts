@@ -43,13 +43,13 @@ export const fetchCollectionCategoriesData = createAsyncThunk<void>(
   }
 );
 
-export const fetchCollectionProductsData = createAsyncThunk<void, { category: string | null }>(
+export const fetchCollectionProductsData = createAsyncThunk<void, { equalKey: string, equalValue: string | boolean | null }>(
   "app/fetchCollectionData", async function (props, { dispatch }) {
   dispatch(setIsLoading(true));
   const data: ProductType[] = await getItemsDB(
     "products/products",
-    "category",
-    props.category,
+    props.equalKey,
+    props.equalValue,
     15
   );
 

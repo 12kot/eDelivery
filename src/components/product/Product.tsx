@@ -16,7 +16,7 @@ const Product = (): ReactElement => {
 
   useEffect(() => {
     if (id) dispatch(fetchProductData({ id: id }));
-    if (category) dispatch(fetchCollectionProductsData({category: category }));
+    if (category) dispatch(fetchCollectionProductsData({equalKey: "category", equalValue: category }));
   }, [category, id]);
 
   return (

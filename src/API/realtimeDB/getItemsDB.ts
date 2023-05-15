@@ -1,6 +1,6 @@
 import { getDatabase, ref, get, query, orderByChild, equalTo, limitToFirst } from "firebase/database";
 
-const getItemsDB = async <T>(path: string, equalKey: string | null, equalValue: number | string | null, count: number): Promise<T[]> => {
+const getItemsDB = async <T>(path: string, equalKey: string | null, equalValue: number | string | boolean | null, count: number): Promise<T[]> => {
   let data: T[] = [];
   const db = getDatabase();
   let q = query(ref(db, path), limitToFirst(count));

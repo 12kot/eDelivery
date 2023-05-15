@@ -18,7 +18,11 @@ const Category = (): ReactElement => {
 
   useEffect(() => {
     if (category) {
-      dispatch(fetchCollectionProductsData({ category: category }));
+      if (category === "discounts")
+        dispatch(fetchCollectionProductsData({equalKey: "isDiscount", equalValue: true}));
+      else
+        dispatch(fetchCollectionProductsData({ equalKey: "category", equalValue: category }));
+        
       dispatch(fetchCategoryData({ category: category }));
     }
   }, [dispatch]);
