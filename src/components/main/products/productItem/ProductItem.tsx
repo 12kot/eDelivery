@@ -10,7 +10,7 @@ const Product = (props: ProductType): ReactElement => {
       <div className={styles.content}>
         <h4>{props.price} р.</h4>
 
-        <p className={styles.description}>{props.description}</p>
+        <p className={styles.description}>{props.name}</p>
         <p className={styles.location}>{props.location}</p>
       </div>
       <button className={styles.button}>+</button>
