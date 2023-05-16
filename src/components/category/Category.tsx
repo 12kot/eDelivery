@@ -17,7 +17,7 @@ type MyParams = {
 
 const Category = (): ReactElement => {
   const { category } = useParams<keyof MyParams>() as MyParams;
-  const [numberOfProducts, setNumberOfProducts] = useState(5);
+  const [numberOfProducts, setNumberOfProducts] = useState(4);
   const { products, isLoading, currentCategory, numberOfItems } =
     useAppSelector((state) => state.app);
 
@@ -67,9 +67,9 @@ const Category = (): ReactElement => {
 
           <div className={styles.add_button}>
             {getProducts().length !== 0 ? (
-              numberOfItems !== getProducts().length ? (
+              numberOfProducts < numberOfItems ? (
                 <button
-                  onClick={() => setNumberOfProducts(numberOfProducts + 1)}
+                  onClick={() => setNumberOfProducts(numberOfProducts + 3)}
                 >
                   Загрузить ещё
                 </button>

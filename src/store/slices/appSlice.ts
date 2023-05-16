@@ -136,7 +136,7 @@ const appSlice = createSlice({
   },
 });
 
-export const {
+const {
   setCategories,
   // setBanners,
   setProducts,

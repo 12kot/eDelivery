@@ -6,7 +6,7 @@ const getNumberOfItems = async (path: string, equalKey: string | null, equalValu
   let q = query(ref(db, path));
 
   if (equalValue && equalKey)
-    q = query(ref(db, path), orderByChild("id"), equalTo(equalValue));
+    q = query(ref(db, path), orderByChild(equalKey), equalTo(equalValue));
 
   await get(q).then((snapshot) => {
     if (snapshot.exists()) {
