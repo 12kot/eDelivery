@@ -2,7 +2,10 @@ import React, { ReactElement, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styles from "./Product.module.css";
 import { useAppDispatch, useAppSelector } from "hooks/hooks";
-import { fetchProductData, fetchCollectionProductsData } from "store/slices/appSlice";
+import {
+  fetchProductData,
+  fetchCollectionProductsData,
+} from "store/slices/appSlice";
 import Loader from "ui/loader/Loader";
 import heartIcon from "images/icons/heart.png";
 import ProductsSwiper from "components/main/products/ProductsSwiper";
@@ -16,7 +19,14 @@ const Product = (): ReactElement => {
 
   useEffect(() => {
     if (id) dispatch(fetchProductData({ id: id }));
-    if (category) dispatch(fetchCollectionProductsData({equalKey: "category", equalValue: category }));
+    if (category)
+      dispatch(
+        fetchCollectionProductsData({
+          equalKey: "category",
+          equalValue: category,
+          count: 15,
+        })
+      );
   }, [category, id]);
 
   return (
@@ -71,8 +81,9 @@ const Product = (): ReactElement => {
                   </div>
                 </div>
               </div>
+
               <ProductsSwiper
-                heading="Подобока похожих товаров"
+                heading="Подборка похожих товаров"
                 products={products}
               />
               <div className={styles.mobile_menu}>

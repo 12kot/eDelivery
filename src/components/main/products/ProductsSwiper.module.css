@@ -1,6 +1,7 @@
 .container {
   margin: 24px 0 0;
 
+  row-gap: 12px;
   display: flex;
   flex-direction: column;
 }
@@ -16,6 +17,7 @@
   flex-wrap: nowrap;
 
   overflow: auto;
+  gap: 10px;
 }
 
 .products::-webkit-scrollbar {

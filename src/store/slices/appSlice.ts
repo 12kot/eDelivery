@@ -6,12 +6,14 @@ import {
 import { CategoryType } from "types/types";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import getItemsDB from "API/realtimeDB/getItemsDB";
+import getNumberItems from "API/realtimeDB/getNumberOfItems";
 
 type AppType = {
   categories: CategoryType[];
   banners: BannerType[];
   products: ProductCategoriesType;
   isLoading: boolean;
+  numberOfItems: number;
   currentProduct?: ProductType;
   currentCategory?: CategoryType;
 };
@@ -22,6 +24,7 @@ const initialState: AppType = {
     products: [],
   },
 
+  numberOfItems: 0,
   isLoading: false,
   banners: [],
 };
@@ -30,12 +33,7 @@ export const fetchCollectionCategoriesData = createAsyncThunk<void>(
   "app/fetchCollectionCategoriesData",
   async function (_, { dispatch }) {
     dispatch(setIsLoading(true));
-    const data: CategoryType[] = await getItemsDB(
-      "categories",
-      null,
-      null,
-      15
-    );
+    const data: CategoryType[] = await getItemsDB("categories", null, null, 15);
 
     dispatch(setCategories(Object.values(data)));
 
@@ -43,17 +41,22 @@ export const fetchCollectionCategoriesData = createAsyncThunk<void>(
   }
 );
 
-export const fetchCollectionProductsData = createAsyncThunk<void, { equalKey: string, equalValue: string | boolean | null }>(
-  "app/fetchCollectionData", async function (props, { dispatch }) {
+export const fetchCollectionProductsData = createAsyncThunk<
+  void,
+  { equalKey: string; equalValue: string | boolean | null; count: number }
+>("app/fetchCollectionData", async function (props, { dispatch }) {
   dispatch(setIsLoading(true));
   const data: ProductType[] = await getItemsDB(
     "products/products",
     props.equalKey,
     props.equalValue,
-    15
+    props.count
   );
 
   dispatch(setProducts(Object.values(data)));
+  // const count: number = await getNumberItems("products/products", props.equalKey,
+  //   props.equalValue,);
+  //   dispatch(setNumberOfProducts(count));
 
   dispatch(setIsLoading(false));
 });
@@ -81,7 +84,7 @@ export const fetchCategoryData = createAsyncThunk<void, { category: string }>(
     dispatch(setIsLoading(true));
     const data: CategoryType[] = await getItemsDB(
       "categories",
-        "link",
+      "link",
       `category/${props.category}`,
       1
     );
@@ -91,6 +94,19 @@ export const fetchCategoryData = createAsyncThunk<void, { category: string }>(
     dispatch(setIsLoading(false));
   }
 );
+
+export const fetchNumberOfItems = createAsyncThunk<
+  void,
+  { equalKey: string; equalValue: string | boolean }
+>("app/fetchNumberOfItems", async function (props, { dispatch }) {
+  const count: number = await getNumberItems(
+    "products/products",
+    props.equalKey,
+    props.equalValue
+  );
+
+  dispatch(setNumberOfProducts(count));
+});
 
 const appSlice = createSlice({
   name: "app",
@@ -108,6 +124,9 @@ const appSlice = createSlice({
     setCurrentProduct(state, action: PayloadAction<ProductType>) {
       state.currentProduct = action.payload;
     },
+    setNumberOfProducts(state, action: PayloadAction<number>) {
+      state.numberOfItems = action.payload;
+    },
     setCurrentCategory(state, action: PayloadAction<CategoryType>) {
       state.currentCategory = action.payload;
     },
@@ -117,12 +136,13 @@ const appSlice = createSlice({
   },
 });
 
-const {
+export const {
   setCategories,
   // setBanners,
   setProducts,
   setCurrentProduct,
   setIsLoading,
   setCurrentCategory,
+  setNumberOfProducts,
 } = appSlice.actions;
 export default appSlice;

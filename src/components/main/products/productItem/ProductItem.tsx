@@ -5,16 +5,24 @@ import { NavLink } from "react-router-dom";
 
 const ProductItem = (props: ProductType): ReactElement => {
   return (
-    <NavLink to={`/category/${props.category}/${props.id}`} className={styles.container}>
-      <img src={props.imageURL} alt={props.name} />
-      <div className={props.isDiscount ? `${styles.content} ${styles.discount}` : `${styles.content}`}>
-        <h4>{props.price} р.</h4>
+    <div className={styles.container}>
+      <NavLink to={`/category/${props.category}/${props.id}`}>
+        <div className={styles.image}><img src={props.imageURL} alt={props.name} /></div>
+        <div
+          className={
+            props.isDiscount
+              ? `${styles.content} ${styles.discount}`
+              : `${styles.content}`
+          }
+        >
+          <h4>{props.price} р.</h4>
 
-        <p className={styles.description}>{props.name}</p>
-        <p className={styles.location}>{props.location}</p>
-      </div>
+          <p className={styles.description}>{props.name}</p>
+          <p className={styles.location}>{props.location}</p>
+        </div>
+      </NavLink>
       <button className={styles.button}>+</button>
-    </NavLink>
+    </div>
   );
 };
 

@@ -27,7 +27,7 @@ const ProductsSwiper = (props: Props): ReactElement => {
       //  </SwiperSlide>
       ));}
 
-    return [<></>];
+    return [];
   };
 
   // new SwiperSettings(".swiper", {

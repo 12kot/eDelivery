@@ -14,7 +14,7 @@ const Main = (): ReactElement => {
 
   useEffect(() => {
     dispatch(fetchCollectionCategoriesData());
-    dispatch(fetchCollectionProductsData ({equalKey: "category", equalValue: null}));
+    dispatch(fetchCollectionProductsData ({equalKey: "category", equalValue: null, count: 15}));
   }, [dispatch]);
 
   const getDiscountProducs = (): ProductType[] => {
