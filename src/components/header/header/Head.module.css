@@ -20,6 +20,7 @@
 
 .logo {
   letter-spacing: 2px;
+  animation: shows 0.3s;
 
   background-color: unset;
   border: none;
@@ -128,6 +129,10 @@
 }
 
 @media screen and (max-width: 960px) {
+  .logo.nonactive {
+    display: none;
+  }
+
   .container {
     margin: 0;
   }
