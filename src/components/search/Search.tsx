@@ -36,7 +36,7 @@ const Search = (): ReactElement => {
       <NavLink to="/" className={styles.back_home}>
         <p>{`<---`} Вернуться на главную</p>
       </NavLink>
-      <h2>{`Поиска товаров по запросу: "${request}" найдено ${totalNumberOfItems}`}</h2>
+      <h2>{`Поиск товаров по запросу: "${request}" найдено ${totalNumberOfItems}`}</h2>
       <div className={styles.products}>{getProducts()}</div>
 
       <div className={styles.add_button}>
