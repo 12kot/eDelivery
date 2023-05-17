@@ -1,0 +1,87 @@
+.container {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  max-height: 100px;
+  font-size: 14px;
+
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  border-radius: 10px;
+
+  overflow: hidden;
+}
+
+.container p {
+  line-height: 16px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.container h5 {
+  font-size: 16px;
+}
+
+
+.container:hover {
+  background-color: rgb(239, 241, 241);
+}
+
+.nav_container {
+  display: flex;
+  flex: 1 1;
+}
+
+.nav_container img {
+  height: 80px;
+  width: 80px;
+  -o-object-fit: cover;
+  object-fit: cover;
+}
+
+.description {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex: 1 1;
+
+  overflow: hidden;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.add_button {
+  height: 100%;
+  margin: auto 0 0;
+  padding: 0 0 0 12px;
+}
+
+.button {
+  color: #fff;
+  background-color: #02b875;
+  border: 1px solid #02b875;
+
+  height: 34px;
+  padding: 7px 15px;
+
+  font-size: 14px;
+  border-radius: 9px;
+
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: 0.3s;
+}
+
+.button:hover {
+  background-color: hsla(158, 98%, 36%, 0.9);
+}
+
+.button:active {
+  background-color: hsl(158, 100%, 7%);
+  transform: scale(0.95);
+}

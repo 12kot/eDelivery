@@ -5,6 +5,7 @@ import Main from "./components/main/Main";
 import Header from "./components/header/Header";
 import Product from "components/product/Product";
 import Category from "components/category/Category";
+import Search from "components/search/Search";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
           <Route path="/*" element={<Main />} />
           
           <Route path="/category/:category" element={<Category />} />
+          <Route path="/search/:request" element={<Search />} />
           <Route path="/category/:category/:id" element={<Product />} />
         </Routes>
       </div>

@@ -1,16 +1,45 @@
-import React, { ReactElement, useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { ReactElement, useEffect, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import styles from "./Head.module.css";
 import Actions from "../actions/Actions";
-import getSearchItems from "API/realtimeDB/getSearchItems";
+import { useAppDispatch } from "hooks/hooks";
+import { fetchSearchItems } from "store/slices/appSlice";
+import SeachModal from "./modal/SearchModal";
 
 const Head = (): ReactElement => {
   const [searchValue, setSearchValue] = useState("");
+  const [isActive, setIsActive] = useState(true);
+
+  useEffect(() => {
+    dispatch(fetchSearchItems({ equalKey: "name", equalValue: searchValue, count: 15 }));
+    
+    if (searchValue) setIsActive(true);
+    else setIsActive(false);
+   }, [searchValue]);
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const handleSearchInput = (e: string) => {
+    setSearchValue(e);
+  }
+
+  const handleSearchButton = () => {
+    setSearchValue("");
+    navigate(`search/${searchValue}`);
+  }
 
   return (
     <header className={styles.header}>
       <div className={styles.container}>
-        <NavLink to="/" className={searchValue !== "" ? `${styles.logo} ${styles.nonactive}` : `${styles.logo}`}>
+        <NavLink
+          to="/"
+          className={
+            searchValue !== ""
+              ? `${styles.logo} ${styles.nonactive}`
+              : `${styles.logo}`
+          }
+        >
           <h2>LOGO</h2>
         </NavLink>
         <div className={`${styles.container_catalog}`}>
@@ -21,14 +50,29 @@ const Head = (): ReactElement => {
             type="text"
             placeholder="Поиск товаров"
             className={`${styles.search} ${styles.item}`}
-            // onChange={async (e) => await getSearchItems("", "", e.target.value)}
-            onChange={(e) => setSearchValue(e.target.value)}
+            value={searchValue}
+            onChange={(e) => handleSearchInput(e.target.value)}
           />
         </div>
-        <div className={searchValue !== "" ? `${styles.search_button} ${styles.active}`: styles.search_button}><button className={styles.btn}>Найти</button></div>
+        <div
+          className={
+            searchValue !== ""
+              ? `${styles.search_button} ${styles.active}`
+              : styles.search_button
+          }
+        >
+          <button
+            className={styles.btn}
+            onClick={handleSearchButton}
+          >
+            Найти
+          </button>
+        </div>
         <div className={`${styles.container_actions}`}>
           <Actions isFooter={false} />
         </div>
+        {}
+        <SeachModal active={isActive} setActive={setIsActive} searchValue={searchValue} setSearchValue={setSearchValue} />
       </div>
     </header>
   );

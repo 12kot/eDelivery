@@ -17,8 +17,13 @@ export type ProductType = {
   brand: string,
 };
 
+type searchProducts = {
+  products: ProductType[],
+  totalNumberOfItems: number,
+}
 export type ProductCategoriesType = {
   products: ProductType[],
+  search: searchProducts,
 }
 
 export type BannerType = {

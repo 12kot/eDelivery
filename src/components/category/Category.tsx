@@ -7,7 +7,6 @@ import {
   fetchCollectionProductsData,
   fetchNumberOfItems,
 } from "store/slices/appSlice";
-import Loader from "ui/loader/Loader";
 import ProductItem from "components/main/products/productItem/ProductItem";
 import { v4 } from "uuid";
 
@@ -17,8 +16,8 @@ type MyParams = {
 
 const Category = (): ReactElement => {
   const { category } = useParams<keyof MyParams>() as MyParams;
-  const [numberOfProducts, setNumberOfProducts] = useState(4);
-  const { products, isLoading, currentCategory, numberOfItems } =
+  const [numberOfProducts, setNumberOfProducts] = useState(3);
+  const { products, currentCategory, totalNumberOfItems } =
     useAppSelector((state) => state.app);
 
   const dispatch = useAppDispatch();
@@ -30,7 +29,7 @@ const Category = (): ReactElement => {
       equalKey = "isDiscount";
       equalValue = true;
     }
-
+    
     dispatch(
       fetchCollectionProductsData({
         equalKey: equalKey,
@@ -42,7 +41,7 @@ const Category = (): ReactElement => {
       fetchNumberOfItems({ equalKey: equalKey, equalValue: equalValue })
     );
     dispatch(fetchCategoryData({ category: category }));
-  }, [numberOfProducts]);
+  }, [category, numberOfProducts]);
 
   const getProducts = (): ReactElement[] => {
     if (products.products) {
@@ -55,9 +54,7 @@ const Category = (): ReactElement => {
 
   return (
     <div>
-      {isLoading ? (
-        <Loader />
-      ) : currentCategory ? (
+      {currentCategory ? (
         <div className={styles.container}>
           <NavLink to="/" className={styles.back_home}>
             <p>{`<---`} Вернуться назад</p>
@@ -67,7 +64,7 @@ const Category = (): ReactElement => {
 
           <div className={styles.add_button}>
             {getProducts().length !== 0 ? (
-              numberOfProducts < numberOfItems ? (
+              numberOfProducts < totalNumberOfItems ? (
                 <button
                   onClick={() => setNumberOfProducts(numberOfProducts + 3)}
                 >
@@ -81,9 +78,7 @@ const Category = (): ReactElement => {
             )}
           </div>
         </div>
-      ) : (
-        <h1>Категория не найдена </h1>
-      )}
+      ) : <></>}
     </div>
   );
 };

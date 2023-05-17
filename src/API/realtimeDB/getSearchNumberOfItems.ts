@@ -5,24 +5,21 @@ import {
   query,
   orderByChild,
   startAt,
-  endAt,
-  limitToFirst,
+  endAt
 } from "firebase/database";
 
-const getSearchItems = async <T>(
+const getSearchNumberOfItems = async (
   path: string,
   equalKey: string,
-  equalValue: string,
-  count: number
-): Promise<T[]> => {
+  equalValue: string
+): Promise<number> => {
 
-  let data: T[] = [];
+  let data: number = 0;
 
   const db = getDatabase();
   let q = query(
     ref(db, path),
     orderByChild(equalKey),
-    limitToFirst(count),
     startAt(equalValue),
     endAt(`${equalValue}\uf8ff`)
   );
@@ -30,7 +27,7 @@ const getSearchItems = async <T>(
   await get(q)
     .then((snapshot) => {
       if (snapshot.exists()) {
-        data = snapshot.val();
+        data = snapshot.size;
       } else {
         console.log("No data available");
       }
@@ -42,4 +39,4 @@ const getSearchItems = async <T>(
   return data;
 };
 
-export default getSearchItems;
+export default getSearchNumberOfItems;

@@ -1,0 +1,94 @@
+.container {
+  min-height: 100vh;
+  margin: 24px 0 0;
+  padding: 0 0 3vh;
+
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  grid-column-gap: 12px;
+  -moz-column-gap: 12px;
+  column-gap: 12px;
+  grid-row-gap: 12px;
+  row-gap: 12px;
+}
+
+.add_button {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add_button button {
+  background-color: #02b875;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+
+  color: white;
+  text-align: center;
+  font-size: 1rem;
+
+  transition: 0.3s;
+}
+
+.add_button button:hover {
+  background-color: hsla(158, 98%, 36%, 0.9);
+}
+
+.add_button button:active {
+  background-color: hsl(158, 100%, 7%);
+  transform: scale(0.95);
+}
+
+.back_home {
+  width: fit-content;
+}
+
+.back_home p {
+  color: #bfc6c4;
+  transition: 0.3s;
+}
+
+.back_home p:hover {
+  color: black;
+}
+
+@media screen and (max-width: 1560px) {
+  .container {
+    padding: 0 0 10vh 0;
+  }
+  .products {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+@media screen and (max-width: 1400px) {
+  .products {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+@media screen and (max-width: 1200px) {
+  .products {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .products {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 300px) {
+  .products {
+    width: 100%;
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
