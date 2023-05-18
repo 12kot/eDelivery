@@ -1,0 +1,31 @@
+.coolinput {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  position: static;
+  width: 100%;
+}
+
+.coolinput label.text {
+  font-size: 0.75rem;
+  color: #5a5858;
+  font-weight: 700;
+  position: relative;
+  top: 0.5rem;
+  margin: 0 0 0 7px;
+  padding: 0 3px;
+  background: #fff;
+  width: fit-content;
+}
+
+.coolinput input[type="text"].input {
+  padding: 11px 10px;
+  font-size: 0.9rem;
+  border: 2px #5a5858 solid;
+  border-radius: 5px;
+  background: #fff;
+}
+
+.coolinput input[type="text"].input:focus {
+  outline: none;
+}

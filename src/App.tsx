@@ -6,6 +6,7 @@ import Header from "./components/header/Header";
 import Product from "components/product/Product";
 import Category from "components/category/Category";
 import Search from "components/search/Search";
+import Login from "components/auth/login/Login";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
       <div className="content">
         <Routes>
           <Route path="/*" element={<Main />} />
+          <Route path="/login" element={<Login />} />
           
           <Route path="/category/:category" element={<Category />} />
           <Route path="/search/:request" element={<Search />} />

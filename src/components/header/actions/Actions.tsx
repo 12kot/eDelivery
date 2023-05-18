@@ -22,7 +22,7 @@ const Actions = (props: Props): ReactElement => {
             <p>Главная</p>
         </NavLink>
       )}
-      <NavLink to="/profile" className={`${styles.action}`}>
+      <NavLink to="/login" className={`${styles.action}`}>
           <img src={userIcon} alt="user" />
           <p>Войти</p>
         
