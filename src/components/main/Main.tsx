@@ -13,8 +13,8 @@ const Main = (): ReactElement => {
   const { products, isLoading } = useAppSelector((state) => state.app);
 
   useEffect(() => {
-    dispatch(fetchCollectionCategoriesData());
-    dispatch(fetchCollectionProductsData ({equalKey: "category", equalValue: null, count: 15}));
+     dispatch(fetchCollectionCategoriesData());
+     dispatch(fetchCollectionProductsData ({equalKey: "category", equalValue: null, count: 15}));
   }, [dispatch]);
 
   const getDiscountProducs = (): ProductType[] => {

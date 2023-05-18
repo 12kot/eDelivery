@@ -2,6 +2,7 @@ import React, { ReactElement, Dispatch, SetStateAction } from "react";
 import { ProductType } from "types/types";
 import styles from "./Product.module.css";
 import { useNavigate } from "react-router-dom";
+import { useInView } from "react-intersection-observer";
 
 type Props = {
   product: ProductType;
@@ -11,17 +12,22 @@ type Props = {
 const Product = (props: Props): ReactElement => {
   const navigate = useNavigate();
 
+  const { ref, inView } = useInView({
+    threshold: 0.1,
+    triggerOnce: true,
+  });
+
   const handleClick = () => {
     props.setActive(false);
     navigate(`category/${props.product.category}/${props.product.id}`);
   }
 
   return (
-    <div className={styles.container}>
+    <div ref={ref} className={styles.container}>
       <div onClick={handleClick}
         className={styles.nav_container}
       >
-        <img src={props.product.imageURL} alt={props.product.name} />
+        {inView ?<img src={props.product.imageURL} alt={props.product.name} /> : <img src="" alt=""></img> }
         <div className={styles.description}>
           <p>{props.product.name}</p>
           <h5>{props.product.price}</h5>

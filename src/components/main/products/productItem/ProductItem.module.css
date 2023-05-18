@@ -28,7 +28,9 @@
 .image img {
   width: calc(100px + 8vw);
   max-width: 200px;
-
+  height: calc(100px + 8vw);
+  max-height: 200px;
+  
   object-fit: cover;
 }
 

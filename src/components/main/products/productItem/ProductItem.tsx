@@ -2,12 +2,20 @@ import React, { ReactElement } from "react";
 import styles from "./ProductItem.module.css";
 import { ProductType } from "types/types";
 import { NavLink } from "react-router-dom";
+import { useInView } from "react-intersection-observer";
 
 const ProductItem = (props: ProductType): ReactElement => {
+  const { ref, inView } = useInView({
+    threshold: 0.1,
+    triggerOnce: true,
+  });
+
   return (
-    <div className={styles.container}>
+    <div ref={ref} className={styles.container}>
       <NavLink to={`/category/${props.category}/${props.id}`}>
-        <div className={styles.image}><img src={props.imageURL} alt={props.name} /></div>
+        <div className={styles.image}>
+          {inView ? <img src={props.imageURL} alt={props.name} /> : <img src="" alt=""></img>}
+        </div>
         <div
           className={
             props.isDiscount
