@@ -6,12 +6,15 @@ import homeIcon from "images/icons/home.png";
 import userIcon from "images/icons/user.png";
 import heartIcon from "images/icons/heart.png";
 import basketIcon from "images/icons/basket.png";
+import { useAppSelector } from "hooks/hooks";
 
 type Props = {
   isFooter: boolean;
 };
 
 const Actions = (props: Props): ReactElement => {
+  const userEmail = useAppSelector((state) => state.user.currentUser.email);
+
   return (
     <nav className={styles.container_actions}>
       {!props.isFooter ? (
@@ -22,9 +25,9 @@ const Actions = (props: Props): ReactElement => {
             <p>Главная</p>
         </NavLink>
       )}
-      <NavLink to="/login" className={`${styles.action}`}>
+      <NavLink to={!!userEmail ? "/profile" : "/login"} className={`${styles.action}`}>
           <img src={userIcon} alt="user" />
-          <p>Войти</p>
+          <p>{!!userEmail ? "Профиль" : "Войти"}</p>
         
       </NavLink>
       <NavLink to="/heart" className={`${styles.action}`}>

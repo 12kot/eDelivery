@@ -2,7 +2,8 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import CreateWithEmailAndPassword from "API/auth/CreateWithEmail";
 import LoginByEmail from "API/auth/LoginByEmail";
 import LoginByGoogle from "API/auth/LoginByGoogle";
-import { CurrentUser } from "types/types";
+import Logout from "API/auth/Logout";
+import { AuthUser, CurrentUser } from "types/types";
 
 type UserSlice = {
   currentUser: CurrentUser;
@@ -21,18 +22,15 @@ const initialState: UserSlice = {
   isLoading: false,
 };
 
-type db = {
-  address: string;
-  basket: string;
-  favorite: string;
-};
-
-const dbUser: db = {
-  address: "",
-  basket: "",
-  favorite: "",
-}; //поулчаю инфу сюда из БД
-//ПЕРЕИМЕНОВАТЬ
+export const fetchUserData = createAsyncThunk<void, { user: AuthUser }>(
+  "user/fetchUserData",
+  async function (props, { dispatch }) {
+    //ВОТ ТУТ МНЕ НАДО ПОЛУЧИТЬ ИНФУ О ЮЗЕРЕ ИЗ БД
+    dispatch(
+      setCurrentUser({ ...props.user, address: "", basket: "", favorite: "" })
+    );
+  }
+);
 
 export const loginUserByGoogle = createAsyncThunk<void>(
   "user/loginUserByGoogle",
@@ -41,7 +39,7 @@ export const loginUserByGoogle = createAsyncThunk<void>(
 
     let data = await LoginByGoogle();
     if (data.email) {
-      dispatch(setUser({ ...data, ...dbUser }));
+      dispatch(fetchUserData({ user: data }));
     }
 
     dispatch(setIsLoading(false));
@@ -56,10 +54,9 @@ export const loginUserByEmail = createAsyncThunk<
 
   let data = await LoginByEmail(props.email, props.password);
   if (data.email) {
-    dispatch(setUser({...data, ...dbUser}));
+    dispatch(fetchUserData({ user: data }));
   }
 
-    console.log(data);
   dispatch(setIsLoading(false));
 });
 
@@ -71,18 +68,31 @@ export const createUserWithEmail = createAsyncThunk<
   //ВАЛИДАЦИЯ. СОЗДАТЬ ЯЧЕЙКУ В БД
   let data = await CreateWithEmailAndPassword(props.email, props.password);
   if (data.email) {
-    dispatch(setUser({ ...data, address: "", basket: "", favorite: "" }));
+    dispatch(
+      setCurrentUser({ ...data, address: "", basket: "", favorite: "" })
+    );
   }
 
   dispatch(setIsLoading(false));
 });
 
+export const logoutUser = createAsyncThunk<void>(
+  "user/logoutUser",
+  async function (_, { dispatch }) {
+    await Logout();
+    dispatch(removeCurrentUser());
+  }
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser(state, action: PayloadAction<CurrentUser>) {
+    setCurrentUser(state, action: PayloadAction<CurrentUser>) {
       state.currentUser = action.payload;
+    },
+    removeCurrentUser(state) {
+      state.currentUser = initialState.currentUser;
     },
     setIsLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
@@ -90,5 +100,5 @@ const userSlice = createSlice({
   },
 });
 
-const { setUser, setIsLoading } = userSlice.actions;
+const { setCurrentUser, setIsLoading, removeCurrentUser } = userSlice.actions;
 export default userSlice;
