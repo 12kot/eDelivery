@@ -1,0 +1,26 @@
+.login_button {
+  height: 50px;
+  min-width: 236px;
+  width: 100%;
+
+  font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+
+  padding: 15px;
+
+  background-color: #02b875;
+  transition: 0.3s;
+
+  border-width: 2px;
+  border-radius: 6px;
+  border: none;
+}
+
+.login_button:hover {
+  background-color: #008d59;
+}
+
+.login_button:active {
+  transform: scale(0.99);
+}

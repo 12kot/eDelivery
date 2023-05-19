@@ -1,0 +1,34 @@
+.line_container {
+  width: 100%;
+  color: #5a5858;
+}
+
+.line_container p {
+  position: relative;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: normal;
+  text-align: center;
+}
+
+.line_container p > span {
+  display: inline-block;
+  margin: 0 0.4em;
+}
+
+.line_container p > span:before,
+.line_container p > span:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  border-top: 2px solid #ececf0;
+  margin-top: 0.6em;
+}
+
+.line_container p > span:before {
+  margin-left: -102%;
+}
+
+.line_container p > span:after {
+  margin-left: 2%;
+}

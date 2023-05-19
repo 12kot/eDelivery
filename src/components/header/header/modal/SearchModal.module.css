@@ -71,22 +71,22 @@
   font-weight: bold;
 
   align-items: center;
-  
+
   background-color: #fff;
   border: none;
-  
+
   color: #1c1c1e;
   background-color: #f4f4f4;
   border-color: #f4f4f4;
-  
+
   height: 45px;
   padding: 11px 23px;
   border-radius: 11px;
-  
+
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  
+
   transition: 0.3s;
   margin: 16px 12vw;
 }
@@ -103,6 +103,15 @@
 }
 
 @media screen and (max-width: 960px) {
+  .modal {
+    margin: 55px 0;
+    height: calc(100vh - 110px);
+  }
+
+  .close_modal {
+    height: 55px;
+  }
+
   .items {
     margin: 0 2vw 12px;
   }

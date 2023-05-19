@@ -7,6 +7,7 @@ import Product from "components/product/Product";
 import Category from "components/category/Category";
 import Search from "components/search/Search";
 import Login from "components/auth/login/Login";
+import Register from "components/auth/register/Register";
 
 const App = () => {
   return (
@@ -17,7 +18,8 @@ const App = () => {
         <Routes>
           <Route path="/*" element={<Main />} />
           <Route path="/login" element={<Login />} />
-          
+          <Route path="/register" element={<Register />} />
+
           <Route path="/category/:category" element={<Category />} />
           <Route path="/search/:request" element={<Search />} />
           <Route path="/category/:category/:id" element={<Product />} />

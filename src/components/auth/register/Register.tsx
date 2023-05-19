@@ -7,22 +7,24 @@ import GoogleSignInButton from "ui/buttons/googleButton/GoogleSignInButton";
 import Line from "ui/line/Line";
 import LoginButton from "ui/buttons/loginButton/LoginButton";
 import { useAppDispatch } from "hooks/hooks";
-import { loginUserByEmail, loginUserByGoogle } from "store/slices/userSlice";
+import { createUserWithEmail, loginUserByGoogle } from "store/slices/userSlice";
 
-const Login = (): ReactElement => {
+const Register = (): ReactElement => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
   const dispatch = useAppDispatch();
 
-  const handleLoginByGoogle = () => {
+  const handleLoginByGoogle = (): void => {
     dispatch(loginUserByGoogle());
   };
 
-  const handleLogin = (): void => {
+  const handleRegister = (): void => {
     dispatch(
-      loginUserByEmail({
+      createUserWithEmail({
         email: email,
         password: password,
+        repeatPassword: repeatPassword,
       })
     );
   };
@@ -45,14 +47,18 @@ const Login = (): ReactElement => {
             type="password"
             value={password}
             onChange={setPassword}
-            autocomplete="current-password"
+            autocomplete="new-password"
           />
-          <button className={`${styles.forgot_pass} ${styles.text_button}`}>
-            Забыли пароль?
-          </button>
+          <Input
+            name="Повторите пароль"
+            type="password"
+            value={repeatPassword}
+            onChange={setRepeatPassword}
+            autocomplete="new-password"
+          />
 
           <div className={styles.login_button}>
-            <LoginButton text="Войти в аккаунт" onClick={handleLogin} />
+            <LoginButton text="Зарегистрироваться" onClick={handleRegister} />
           </div>
 
           <div className={styles.line}>
@@ -64,9 +70,9 @@ const Login = (): ReactElement => {
           </div>
 
           <div className={styles.new_user}>
-            Новый пользователь?{" "}
-            <NavLink to="/register" className={styles.text_button}>
-              Создать учётную запись
+            Уже зарегистрированы?{" "}
+            <NavLink to="/login" className={styles.text_button}>
+              Авторизоваться
             </NavLink>
           </div>
         </div>
@@ -75,4 +81,4 @@ const Login = (): ReactElement => {
   );
 };
 
-export default Login;
+export default Register;

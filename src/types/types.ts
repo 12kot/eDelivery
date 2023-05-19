@@ -30,3 +30,18 @@ export type BannerType = {
   imageURL: string,
   link: string,
 };
+
+export type AuthUser = {
+  email: string;
+  uid: string;
+  token: string;
+};
+
+export type CurrentUser = {
+  email: string,
+  uid: string,
+  token: string,
+  address: string,
+  basket: string,
+  favorite: string,
+} 
