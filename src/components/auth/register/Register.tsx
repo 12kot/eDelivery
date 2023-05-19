@@ -34,29 +34,34 @@ const Register = (): ReactElement => {
       <Banner />
       <div className={styles.login_form}>
         <div className={styles.login_form_cont}>
-          <h2 className={styles.item}>Вход на eDelivery</h2>
-          <Input
-            name="Введите логин"
-            type="email"
-            value={email}
-            onChange={setEmail}
-            autocomplete="username"
-          />
-          <Input
-            name="Введите пароль"
-            type="password"
-            value={password}
-            onChange={setPassword}
-            autocomplete="new-password"
-          />
-          <Input
-            name="Повторите пароль"
-            type="password"
-            value={repeatPassword}
-            onChange={setRepeatPassword}
-            autocomplete="new-password"
-          />
-
+          <h2 className={styles.item}>Регистрация на eDelivery</h2>
+          <div className={styles.input_item}>
+            <Input
+              name="Введите логин"
+              type="email"
+              value={email}
+              onChange={setEmail}
+              autocomplete="username"
+            />
+          </div>
+          <div className={styles.input_item}>
+            <Input
+              name="Введите пароль"
+              type="password"
+              value={password}
+              onChange={setPassword}
+              autocomplete="new-password"
+            />
+          </div>
+          <div className={styles.input_item}>
+            <Input
+              name="Повторите пароль"
+              type="password"
+              value={repeatPassword}
+              onChange={setRepeatPassword}
+              autocomplete="new-password"
+            />
+          </div>
           <div className={styles.login_button}>
             <LoginButton text="Зарегистрироваться" onClick={handleRegister} />
           </div>
