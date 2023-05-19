@@ -33,20 +33,24 @@ const Login = (): ReactElement => {
       <div className={styles.login_form}>
         <div className={styles.login_form_cont}>
           <h2 className={styles.item}>Вход на eDelivery</h2>
-          <Input
-            name="Введите логин"
-            type="email"
-            value={email}
-            onChange={setEmail}
-            autocomplete="username"
-          />
-          <Input
-            name="Введите пароль"
-            type="password"
-            value={password}
-            onChange={setPassword}
-            autocomplete="current-password"
-          />
+          <div className={styles.input_item}>
+            <Input
+              name="Введите логин"
+              type="email"
+              value={email}
+              onChange={setEmail}
+              autocomplete="username"
+            />
+          </div>
+          <div className={styles.input_item}>
+            <Input
+              name="Введите пароль"
+              type="password"
+              value={password}
+              onChange={setPassword}
+              autocomplete="current-password"
+            />
+          </div>
           <button className={`${styles.forgot_pass} ${styles.text_button}`}>
             Забыли пароль?
           </button>

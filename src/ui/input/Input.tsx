@@ -19,7 +19,7 @@ const Input = (props: Props): ReactElement => {
         type={props.type}
         name={props.type}
         autoComplete={props.autocomplete}
-        placeholder={`Пишите здесь...`}
+        placeholder={`${props.name}...`}
         value={props.value}
         onChange={(e) => props.onChange(e.target.value)}
         className={styles.input}
