@@ -15,7 +15,7 @@ const initialState: UserSlice = {
     email: "",
     uid: "",
     token: "",
-    address: "",
+    address: [],
     basket: "",
     favorite: "",
   },
@@ -27,7 +27,12 @@ export const fetchUserData = createAsyncThunk<void, { user: AuthUser }>(
   async function (props, { dispatch }) {
     //ВОТ ТУТ МНЕ НАДО ПОЛУЧИТЬ ИНФУ О ЮЗЕРЕ ИЗ БД
     dispatch(
-      setCurrentUser({ ...props.user, address: "", basket: "", favorite: "" })
+      setCurrentUser({
+        ...props.user,
+        address: [],
+        basket: "",
+        favorite: "",
+      })
     );
   }
 );
@@ -69,7 +74,12 @@ export const createUserWithEmail = createAsyncThunk<
   let data = await CreateWithEmailAndPassword(props.email, props.password);
   if (data.email) {
     dispatch(
-      setCurrentUser({ ...data, address: "", basket: "", favorite: "" })
+      setCurrentUser({
+        ...data,
+        address: [],
+        basket: "",
+        favorite: "",
+      })
     );
   }
 

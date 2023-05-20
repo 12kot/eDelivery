@@ -1,0 +1,81 @@
+.personal_data {
+  width: 100%;
+  margin: 24px 0 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.header p {
+  color: #0a84ff;
+  font-weight: 500;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.header p:hover {
+  color: #0b5fb2;
+}
+
+.info {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.data_block {
+  width: 50%;
+}
+
+.data_item {
+  margin: 16px 0 0;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr;
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  font-size: 16px;
+}
+
+.data_head {
+  grid-area: 1 / 1 / 2 / 2;
+  color: #72767d;
+}
+
+.data_data {
+  grid-area: 1 / 2 / 2 / 4;
+}
+
+@media screen and (max-width: 960px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .info {
+    flex-direction: column;
+  }
+
+  .data_block {
+    width: 100%;
+  }
+
+  .data_item {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+  }
+
+  .data_head {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
+  .data_data {
+    grid-area: 1 / 2 / 2 / 3;
+  }
+}

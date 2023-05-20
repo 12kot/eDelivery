@@ -1,19 +1,18 @@
-import { useAppDispatch, useAppSelector } from "hooks/hooks";
+import {  useAppSelector } from "hooks/hooks";
 import React, { ReactElement } from "react";
-import { logoutUser } from "store/slices/userSlice";
+import styles from "./Profile.module.css";
+import Menu from "./menu/Menu";
+import ProfileContent from "./profile/ProfileContent";
 
 const Profile = (): ReactElement => {
   const user = useAppSelector((state) => state.user.currentUser);
-  const dispatch = useAppDispatch();
 
-  const handleClick = () => {
-    dispatch(logoutUser());
-  }
-  
   return (
-    <div>
-      <h2>{user.email}</h2>
-      <button onClick={handleClick}>Выйти</button>
+    <div className={styles.container}>
+      <Menu userEmail={user.email} />
+      <div className={styles.content}>
+        <ProfileContent user={user} />
+      </div>
     </div>
   );
 };

@@ -1,0 +1,67 @@
+.menu {
+  grid-area: 1 / 1 / 6 / 3;
+
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+}
+
+.mail_container {
+  border-radius: 16px;
+
+  min-width: 140px;
+  max-width: 200px;
+  height: 150px;
+
+  background-color: #f6f6f6;
+  padding: 28px 20px 20px;
+  transition: 0.3s;
+}
+
+.mail_container:hover {
+  background-color: #ebebeb;
+}
+
+.mail_container:active {
+  transform: scale(0.99);
+}
+
+.mail_content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu_item {
+  border-radius: 8px;
+  background-color: #f6f6f6;
+
+  margin: 12px 0 0;
+  padding: 0 0 0 20px;
+
+  min-width: 164px;
+  max-width: 224px;
+  height: 48px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  transition: 0.3s;
+}
+
+.menu_item:hover {
+  background-color: #ebebeb;
+}
+
+.menu_item:active {
+  transform: scale(0.99);
+}
+
+@media screen and (max-width: 960px) {
+  .menu {
+    display: none;
+  }
+}

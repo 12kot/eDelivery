@@ -27,7 +27,7 @@ const Product = (): ReactElement => {
           count: 15,
         })
       );
-  }, [category, id]);
+  }, [category, id, dispatch]);
 
   return (
     <div className={styles.container}>
