@@ -76,6 +76,10 @@
   background-color: #b80202;
 }
 
+.isFavorite.button:hover {
+  background-color: #8d0000;
+}
+
 .button {
   width: 45%;
   margin: auto 0 0;

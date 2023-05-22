@@ -6,12 +6,11 @@ import Addresses from "./adresses/Addresses";
 import { logoutUser } from "store/slices/userSlice";
 import { useAppDispatch } from "hooks/hooks";
 import Line from "ui/line/Line";
+import { useOutletContext } from "react-router-dom";
 
-type Props = {
-  user: CurrentUser;
-};
+const ProfileContent = (): ReactElement => {
+  const user: CurrentUser = useOutletContext()
 
-const ProfileContent = (props: Props): ReactElement => {
   const dispatch = useAppDispatch();
 
   const handleClick = () => {
@@ -22,9 +21,9 @@ const ProfileContent = (props: Props): ReactElement => {
     <div className={styles.container}>
       <h2>Профиль</h2>
       <span className={styles.uid}>
-        <p>Ваш ID клиента: {props.user.uid}</p>
+        <p>Ваш ID клиента: {user.uid}</p>
       </span>
-      <UserData user={props.user} />
+      <UserData user={user} />
       <Addresses />
 
       <span className={styles.line}>

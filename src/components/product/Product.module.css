@@ -1,3 +1,7 @@
+.red {
+  color: red;
+}
+
 .container {
   min-height: 100vh;
   margin: 24px 0 0;

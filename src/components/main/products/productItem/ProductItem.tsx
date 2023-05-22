@@ -1,26 +1,31 @@
 import React, { ReactElement } from "react";
 import styles from "./ProductItem.module.css";
 import { ProductType } from "types/types";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import { useAppDispatch, useAppSelector } from "hooks/hooks";
 import { handleFavoriteProduct } from "store/slices/userSlice";
 
 const ProductItem = (props: ProductType): ReactElement => {
-  const favorite = useAppSelector(state => state.user.currentUser.favorite)
+  const isLoggedIn: boolean = !!useAppSelector((state) => state.user.currentUser.email)
+  const favorite = useAppSelector((state) => state.user.currentUser.favorite);
+  const isLoading = useAppSelector((state) => state.user.isLoading);
+
+  const navigate = useNavigate();
+
   const dispatch = useAppDispatch();
 
   const isFavorite = () => {
-    for (let product of favorite)
-      if (product.id === props.id)
-        return true;
-    
+    for (let product of favorite) if (product.id === props.id) return true;
+
     return false;
-  }
+  };
 
   const handleFavorite = () => {
-    dispatch(handleFavoriteProduct({ product: props }));
-  }
+    if (isLoggedIn)
+      dispatch(handleFavoriteProduct({ product: props }));
+    else navigate("/login");
+  };
 
   const { ref, inView } = useInView({
     threshold: 0.1,
@@ -53,7 +58,16 @@ const ProductItem = (props: ProductType): ReactElement => {
 
       <div className={styles.buttons}>
         <button className={styles.button}>+</button>
-        <button onClick={handleFavorite} className={isFavorite() ? `${styles.isFavorite} ${styles.button}` : `${styles.button}`}>{"<3"}</button>
+        <button
+          onClick={isLoading ? () => {} : handleFavorite}
+          className={
+            isFavorite()
+              ? `${styles.isFavorite} ${styles.button}`
+              : `${styles.button}`
+          }
+        >
+          {isLoading ? "..." : "<3"}
+        </button>
       </div>
     </div>
   );

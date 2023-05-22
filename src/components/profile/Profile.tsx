@@ -2,8 +2,7 @@ import {  useAppSelector } from "hooks/hooks";
 import React, { ReactElement } from "react";
 import styles from "./Profile.module.css";
 import Menu from "./menu/Menu";
-import ProfileContent from "./profile/ProfileContent";
-import Favorite from "./favorite/Favorite";
+import { Outlet } from "react-router-dom";
 
 const Profile = (): ReactElement => {
   const user = useAppSelector((state) => state.user.currentUser);
@@ -12,8 +11,7 @@ const Profile = (): ReactElement => {
     <div className={styles.container}>
       <Menu userEmail={user.email} />
       <div className={styles.content}>
-        <Favorite products={user.favorite} />
-        {/* <ProfileContent user={user} /> */}
+        <Outlet context={user} />
       </div>
     </div>
   );

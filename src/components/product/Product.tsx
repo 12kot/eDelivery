@@ -9,13 +9,15 @@ import {
 import Loader from "ui/loader/Loader";
 import heartIcon from "images/icons/heart.png";
 import ProductsSwiper from "components/main/products/ProductsSwiper";
+import { handleFavoriteProduct } from "store/slices/userSlice";
 
 const Product = (): ReactElement => {
   const dispatch = useAppDispatch();
-  const { category, id } = useParams();
+  const { category, id } = useParams<string>();
 
   const { currentProduct, isLoading } = useAppSelector((state) => state.app);
   const products = useAppSelector((state) => state.app.products.products);
+  const favorite = useAppSelector(state => state.user.currentUser.favorite)
 
   useEffect(() => {
     if (id) dispatch(fetchProductData({ id: id }));
@@ -28,6 +30,19 @@ const Product = (): ReactElement => {
         })
       );
   }, [category, id, dispatch]);
+
+  const isFavorite = () => {
+    for (let product of favorite)
+      if (product.id.toString() === id)
+        return true;
+    
+    return false;
+  }
+
+  const handleFavorite = () => {
+    if(!!currentProduct)
+      dispatch(handleFavoriteProduct({ product: currentProduct }));
+  }
 
   return (
     <div className={styles.container}>
@@ -60,12 +75,12 @@ const Product = (): ReactElement => {
                 </div>
 
                 <div className={styles.basket_container}>
-                  <div className={styles.to_basket}>
-                    <button>
-                      <img src={heartIcon} alt="heart" />
-                      <p>В избранное</p>
+                  <span className={styles.to_basket}>
+                    <button onClick={handleFavorite}>
+                        <img src={heartIcon} alt="favorite" />
+                        {isFavorite() ? <p className={styles.red}>В избранном</p> : <p>В избранное</p>}
                     </button>
-                  </div>
+                  </span>
 
                   <div
                     className={

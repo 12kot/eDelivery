@@ -22,7 +22,7 @@ const LoginByEmail = async (
         localStorage.setItem("user", JSON.stringify(user));
       }
     }
-  );
+  ).catch((error) => {console.log(error)});
 
   return user;
 };

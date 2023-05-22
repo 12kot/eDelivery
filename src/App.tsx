@@ -13,6 +13,8 @@ import Profile from "components/profile/Profile";
 import { useAppDispatch, useAppSelector } from "hooks/hooks";
 import { AuthUser } from "types/types";
 import { fetchUserData } from "store/slices/userSlice";
+import ProfileContent from "components/profile/profile/ProfileContent";
+import Favorite from "components/profile/favorite/Favorite";
 
 const App = () => {
   const userEmail = useAppSelector((state) => state.user.currentUser.email);
@@ -50,13 +52,18 @@ const App = () => {
           />
 
           <Route
-            path="/profile"
+            path="/profile/"
             element={
               <Protected isLoggedIn={!!userEmail} path="/login">
                 <Profile />
               </Protected>
             }
-          />
+          >
+            <Route path="" element={     
+              <ProfileContent />} />
+            <Route path="favorite" element={<Favorite />} />
+
+          </Route>
 
           <Route path="/category/:category" element={<Category />} />
           <Route path="/search/:request" element={<Search />} />

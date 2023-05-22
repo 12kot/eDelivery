@@ -30,8 +30,8 @@ const Actions = (props: Props): ReactElement => {
           <p>{!!userEmail ? "Профиль" : "Войти"}</p>
         
       </NavLink>
-      <NavLink to="/heart" className={`${styles.action}`}>
-          <img src={heartIcon} alt="heart" />
+      <NavLink to="/profile/favorite" className={`${styles.action}`}>
+          <img src={heartIcon} alt="favorite" />
           <p>Избранное</p>
         
       </NavLink>

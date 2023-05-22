@@ -1,24 +1,41 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect } from "react";
 import styles from "./Favorite.module.css";
 import ProductItem from "components/main/products/productItem/ProductItem";
-import { ProductType } from "types/types";
+import { CurrentUser } from "types/types";
 import { v4 } from "uuid";
+import { useAppDispatch, useAppSelector } from "hooks/hooks";
+import { fetchUserFavorite } from "store/slices/userSlice";
+import Loader from "ui/loader/Loader";
+import { useOutletContext } from "react-router-dom";
 
-type Props = {
-  products: ProductType[];
-};
+const Favorite = (): ReactElement => {
+  const user: CurrentUser = useOutletContext();
 
-const Favorite = (props: Props): ReactElement => {
+  const dispatch = useAppDispatch();
+  const isLoading = useAppSelector((state) => state.user.isLoading);
+
+  useEffect(() => {
+    dispatch(fetchUserFavorite());
+  }, [dispatch]);
+
   const getProducts = (): ReactElement[] => {
-    if (props.products.length === 0) return [<h3>Продукты не добавлены</h3>];
+    if (user.favorite.length === 0) return [<h3 key={v4()}>Продукты не добавлены</h3>];
 
-    return props.products.map((product) => <ProductItem {...product} key={v4()} />);
+    return user.favorite.map((product) => (
+      <ProductItem {...product} key={v4()} />
+    ));
   };
 
   return (
     <div className={styles.container}>
-      <h2>Избранное</h2>
-      <div className={styles.products}>{getProducts()}</div>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <h2>Избранное</h2>
+          <div className={styles.products}>{getProducts()}</div>
+        </>
+      )}
     </div>
   );
 };

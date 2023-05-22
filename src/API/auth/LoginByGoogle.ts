@@ -23,8 +23,8 @@ const LoginByGoogle = async (): Promise<AuthUser> => {
       console.log(error);
     });
 
-  let str: AuthUser = JSON.parse(localStorage.getItem("user") as string);
-  console.log(str);
+  // let str: AuthUser = JSON.parse(localStorage.getItem("user") as string);
+  // console.log(str);
 
   return user;
 };

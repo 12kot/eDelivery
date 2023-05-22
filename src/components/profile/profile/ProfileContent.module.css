@@ -1,6 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
+  padding: 0 0 3vh;
 }
 
 .uid {
@@ -36,4 +37,10 @@
 
 .logout button:active {
   transform: scale(0.99);
+}
+
+@media screen and (max-width: 960px) {
+  .container {
+    padding: 0 0 8vh;
+  }
 }
