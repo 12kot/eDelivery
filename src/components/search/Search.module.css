@@ -1,7 +1,9 @@
 .container {
   min-height: 100vh;
   margin: 24px 0 0;
+  max-width: 100%;
   padding: 0 0 3vh;
+  overflow-x: hidden;
 
   display: flex;
   flex-direction: column;
@@ -62,21 +64,26 @@
 }
 
 @media screen and (max-width: 1560px) {
-  .container {
-    padding: 0 0 10vh 0;
-  }
   .products {
     grid-template-columns: repeat(5, 1fr);
   }
 }
+
 @media screen and (max-width: 1400px) {
   .products {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
 @media screen and (max-width: 1200px) {
   .products {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media screen and (max-width: 960px) {
+  .container {
+    margin: 24px 0 6vh 0;
   }
 }
 
@@ -86,7 +93,7 @@
   }
 }
 
-@media screen and (max-width: 300px) {
+@media screen and (max-width: 330px) {
   .products {
     width: 100%;
     grid-template-columns: repeat(1, 1fr);

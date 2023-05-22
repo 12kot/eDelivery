@@ -1,8 +1,7 @@
 .container {
   padding: 8px;
-  margin: 0 auto 0;
-  width: 85%;
-
+  width: calc(110px + 10vw);
+  max-width: 200px;
   height: calc(250px + 10vw);
   max-height: 380px;
 
@@ -64,7 +63,21 @@
   color: #9393a3;
 }
 
+.buttons {
+  width: 100%;
+  display: flex;
+  flex: 1 1;
+  align-items: center;
+  justify-content: center;
+  column-gap: 5px;
+}
+
+.isFavorite.button {
+  background-color: #b80202;
+}
+
 .button {
+  width: 45%;
   margin: auto 0 0;
 
   background-color: #02b875;
@@ -93,13 +106,15 @@
   .container {
     height: calc(230px + 10vw);
   }
+
   .description {
     -webkit-line-clamp: 2;
   }
 }
 
-@media screen and (max-width: 300px) {
+@media screen and (max-width: 330px) {
   .container {
+    margin: 0 auto;
     max-width: 100%;
     width: 90%;
   }

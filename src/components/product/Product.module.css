@@ -120,6 +120,7 @@
   .container {
     padding: 0 0 17vh 0;
   }
+  
   .content {
     flex-direction: column;
     align-items: center;

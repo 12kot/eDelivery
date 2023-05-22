@@ -21,6 +21,7 @@ type searchProducts = {
   products: ProductType[];
   totalNumberOfItems: number;
 };
+
 export type ProductCategoriesType = {
   products: ProductType[];
   search: searchProducts;
@@ -43,7 +44,7 @@ export type CurrentUser = {
   token: string;
   address: AddressType[];
   basket: string;
-  favorite: string;
+  favorite: ProductType[];
 };
 
 export type AddressType = {

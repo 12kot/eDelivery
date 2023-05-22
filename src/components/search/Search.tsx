@@ -25,7 +25,7 @@ const Search = (): ReactElement => {
   useEffect(() => {
     dispatch(fetchNumberOfSearchItems({ equalKey: "name", equalValue: request }));
     dispatch(fetchSearchItems({ equalKey: "name", equalValue: request, count: numberOfProducts }));
-  }, [request, numberOfProducts]);
+  }, [request, numberOfProducts, dispatch]);
 
   const getProducts = (): ReactElement[] => {
     return products.map((product) => <ProductItem {...product} key={v4()} />);
