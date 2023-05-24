@@ -8,8 +8,16 @@ import CreateWithEmailAndPassword from "API/auth/CreateWithEmail";
 import LoginByEmail from "API/auth/LoginByEmail";
 import LoginByGoogle from "API/auth/LoginByGoogle";
 import Logout from "API/auth/Logout";
-import { AddressType, AuthUser, CurrentUser, ProductType } from "types/types";
+import {
+  AddressType,
+  AuthUser,
+  BasketItemType,
+  CurrentUser,
+  ProductType,
+} from "types/types";
 import CreateUser from "API/DB/CreateUser";
+import getItemsDB from "API/realtimeDB/getItemsDB";
+import UpdateBasketDoc from "API/DB/UpdateBasketDoc";
 
 type UserSlice = {
   currentUser: CurrentUser;
@@ -22,7 +30,7 @@ const initialState: UserSlice = {
     uid: "",
     token: "",
     address: [],
-    basket: "",
+    basket: [],
     favorite: [],
   },
   isLoading: false,
@@ -67,7 +75,7 @@ export const fetchUserBasket = createAsyncThunk<
 >("user/fetchUserBasket", async function (_, { dispatch, getState }) {
   dispatch(setIsLoading(true));
 
-  const basket: ProductType[] = await GetCol(
+  const basket: BasketItemType[] = await GetCol(
     getState().user.currentUser.uid,
     "basket"
   );
@@ -151,22 +159,78 @@ export const handleFavoriteProduct = createAsyncThunk<
   void,
   { product: ProductType },
   { state: RootState }
->("user/addFavoriteProduct", async function (props, { getState, dispatch }) {
+>("user/handleFavoriteProduct", async function (props, { getState, dispatch }) {
   dispatch(setIsLoading(true));
 
   const userUID = getState().user.currentUser.uid;
-  const isExist: ProductType = await FindDoc(
+  const isExists: ProductType = await FindDoc(
     userUID,
     "favorite",
+    "id",
     props.product.id
   );
 
-  if (!!isExist) {
+  if (!!isExists) {
     await DeleteDoc(userUID, "favorite", props.product.id);
     dispatch(removeFavoriteProduct(props.product));
   } else {
     await SetProduct(userUID, "favorite", props.product);
     dispatch(addFavoriteProduct(props.product));
+  }
+
+  dispatch(setIsLoading(false));
+});
+
+export const handleBasketProduct = createAsyncThunk<
+  void,
+  { basketItem: BasketItemType },
+  { state: RootState }
+>("user/handleBasketProduct", async function (props, { dispatch, getState }) {
+  dispatch(setIsLoading(true));
+
+  const product: ProductType[] = await getItemsDB(
+    "products/products",
+    "id",
+    props.basketItem.product.id,
+    1
+  );
+
+  if (!product[0]) {
+    dispatch(setIsLoading(false));
+    return;
+  }
+  if (product[0].quantity < props.basketItem.count) {
+    dispatch(setIsLoading(false));
+    return;
+  }
+
+  const userUID = getState().user.currentUser.uid;
+  const isExists: ProductType = await FindDoc(
+    userUID,
+    "basket",
+    "product.id",
+    props.basketItem.product.id
+  );
+
+  if (!!isExists) {
+    if (props.basketItem.count === 0) {
+      await DeleteDoc(userUID, "basket", props.basketItem.product.id);
+      dispatch(removeProductBasket(props.basketItem.product.id));
+    } else await UpdateBasketDoc(userUID, "basket", props.basketItem);
+    dispatch(
+      setCountProductToBasket({
+        productID: props.basketItem.product.id,
+        count: props.basketItem.count,
+      })
+    );
+  } else {
+    await SetProduct(
+      userUID,
+      "basket",
+      props.basketItem.product,
+      props.basketItem.count
+    );
+    dispatch(addProductToBasket(props.basketItem));
   }
 
   dispatch(setIsLoading(false));
@@ -185,8 +249,8 @@ const userSlice = createSlice({
     setCurrentUserAddresses(state, action: PayloadAction<AddressType[]>) {
       state.currentUser.address = action.payload;
     },
-    setCurrentUserBasket(state, action: PayloadAction<ProductType[]>) {
-      //state.currentUser.basket = action.payload;
+    setCurrentUserBasket(state, action: PayloadAction<BasketItemType[]>) {
+      state.currentUser.basket = action.payload;
     },
     removeCurrentUser(state) {
       state.currentUser = initialState.currentUser;
@@ -202,6 +266,23 @@ const userSlice = createSlice({
         (product) => product.id !== action.payload.id
       );
     },
+    addProductToBasket(state, action: PayloadAction<BasketItemType>) {
+      state.currentUser.basket.push(action.payload);
+    },
+    setCountProductToBasket(
+      state,
+      action: PayloadAction<{ productID: number; count: number }>
+    ) {
+      state.currentUser.basket.forEach((product) => {
+        if (product.product.id === action.payload.productID)
+          product.count = action.payload.count;
+      });
+    },
+    removeProductBasket(state, action: PayloadAction<number>) {
+      state.currentUser.basket = state.currentUser.basket.filter(
+        (product) => product.product.id !== action.payload
+      );
+    },
   },
 });
 
@@ -214,5 +295,8 @@ const {
   removeCurrentUser,
   addFavoriteProduct,
   removeFavoriteProduct,
+  addProductToBasket,
+  setCountProductToBasket,
+  removeProductBasket,
 } = userSlice.actions;
 export default userSlice;

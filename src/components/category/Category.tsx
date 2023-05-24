@@ -41,12 +41,12 @@ const Category = (): ReactElement => {
       fetchNumberOfItems({ equalKey: equalKey, equalValue: equalValue })
     );
     dispatch(fetchCategoryData({ category: category }));
-  }, [category, numberOfProducts]);
+  }, [category, numberOfProducts, dispatch]);
 
   const getProducts = (): ReactElement[] => {
     if (products.products) {
       return products.products.map((product) => (
-        <ProductItem {...product} key={v4()} />
+        <ProductItem product={product} key={v4()} />
       ));
     }
     return [];

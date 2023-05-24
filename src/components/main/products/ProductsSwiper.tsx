@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import styles from "./ProductsSwiper.module.css";
-import Product from "./productItem/ProductItem";
+import ProductItem from "./productItem/ProductItem";
 import { ProductType } from "types/types";
 import { v4 } from "uuid";
 
@@ -23,7 +23,7 @@ const ProductsSwiper = (props: Props): ReactElement => {
     if (props.products) {
       return props.products.map((product) => (
        // <SwiperSlide  key={v4()}>
-          <Product {...product} key={v4()} />
+          <ProductItem product={product} key={v4()} />
       //  </SwiperSlide>
       ));}
 

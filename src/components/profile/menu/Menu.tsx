@@ -18,11 +18,14 @@ const Menu = (props: Props): ReactElement => {
       <NavLink to="/profile" className={styles.menu_item}>
         <p>Профиль</p>
       </NavLink>
-      <NavLink to="/profile/history" className={styles.menu_item}>
-        <p>История заказов</p>
-      </NavLink>
       <NavLink to="/profile/favorite" className={styles.menu_item}>
         <p>Избранное</p>
+      </NavLink>
+      <NavLink to="/basket" className={styles.menu_item}>
+        <p>Корзина</p>
+      </NavLink>
+      <NavLink to="/profile/history" className={styles.menu_item}>
+        <p>История заказов</p>
       </NavLink>
     </div>
   );

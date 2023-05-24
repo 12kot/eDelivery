@@ -28,7 +28,7 @@ const Search = (): ReactElement => {
   }, [request, numberOfProducts, dispatch]);
 
   const getProducts = (): ReactElement[] => {
-    return products.map((product) => <ProductItem {...product} key={v4()} />);
+    return products.map((product) => <ProductItem product={product} key={v4()} />);
   };
 
   return (

@@ -15,10 +15,10 @@
 
 @media screen and (max-width: 960px) {
   .container {
-    padding: 0 0 8vh 0;
+    padding: 0 0 8vh;
   }
 
   .products {
-    justify-content: space-around;
+    justify-content: space-between;
   }
 }

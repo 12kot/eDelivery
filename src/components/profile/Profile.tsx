@@ -11,7 +11,7 @@ const Profile = (): ReactElement => {
     <div className={styles.container}>
       <Menu userEmail={user.email} />
       <div className={styles.content}>
-        <Outlet context={user} />
+        <Outlet />
       </div>
     </div>
   );

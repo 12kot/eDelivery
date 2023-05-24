@@ -33,6 +33,7 @@
 .nav_container {
   display: flex;
   flex: 1 1;
+  flex-grow: 10;
 }
 
 .nav_container img {
@@ -54,34 +55,8 @@
 }
 
 .add_button {
+  flex-grow: 1;
   height: 100%;
   margin: auto 0 0;
   padding: 0 0 0 12px;
-}
-
-.button {
-  color: #fff;
-  background-color: #02b875;
-  border: 1px solid #02b875;
-
-  height: 34px;
-  padding: 7px 15px;
-
-  font-size: 14px;
-  border-radius: 9px;
-
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-
-  transition: 0.3s;
-}
-
-.button:hover {
-  background-color: hsla(158, 98%, 36%, 0.9);
-}
-
-.button:active {
-  background-color: hsl(158, 100%, 7%);
-  transform: scale(0.95);
 }

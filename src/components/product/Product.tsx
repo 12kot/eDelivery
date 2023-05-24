@@ -7,9 +7,10 @@ import {
   fetchCollectionProductsData,
 } from "store/slices/appSlice";
 import Loader from "ui/loader/Loader";
-import heartIcon from "images/icons/heart.png";
 import ProductsSwiper from "components/main/products/ProductsSwiper";
 import { handleFavoriteProduct } from "store/slices/userSlice";
+import BasketButtons from "components/basketButtons/BasketButtons";
+import Heart from "ui/Heart";
 
 const Product = (): ReactElement => {
   const dispatch = useAppDispatch();
@@ -17,7 +18,7 @@ const Product = (): ReactElement => {
 
   const { currentProduct, isLoading } = useAppSelector((state) => state.app);
   const products = useAppSelector((state) => state.app.products.products);
-  const favorite = useAppSelector(state => state.user.currentUser.favorite)
+  const favorite = useAppSelector((state) => state.user.currentUser.favorite);
 
   useEffect(() => {
     if (id) dispatch(fetchProductData({ id: id }));
@@ -32,17 +33,15 @@ const Product = (): ReactElement => {
   }, [category, id, dispatch]);
 
   const isFavorite = () => {
-    for (let product of favorite)
-      if (product.id.toString() === id)
-        return true;
-    
+    for (let product of favorite) if (product.id.toString() === id) return true;
+
     return false;
-  }
+  };
 
   const handleFavorite = () => {
-    if(!!currentProduct)
+    if (!!currentProduct)
       dispatch(handleFavoriteProduct({ product: currentProduct }));
-  }
+  };
 
   return (
     <div className={styles.container}>
@@ -77,8 +76,14 @@ const Product = (): ReactElement => {
                 <div className={styles.basket_container}>
                   <span className={styles.to_basket}>
                     <button onClick={handleFavorite}>
-                        <img src={heartIcon} alt="favorite" />
-                        {isFavorite() ? <p className={styles.red}>В избранном</p> : <p>В избранное</p>}
+                      <span className={isFavorite() ? styles.red_mobile : ""}>
+                        <Heart />
+                      </span>
+                      {isFavorite() ? (
+                        <p className={styles.red}>В избранном</p>
+                      ) : (
+                        <p>В избранное</p>
+                      )}
                     </button>
                   </span>
 
@@ -91,7 +96,10 @@ const Product = (): ReactElement => {
                   >
                     <h2>{currentProduct.price} р.</h2>
                     <div className={styles.button}>
-                      <button>В корзину</button>
+                      <BasketButtons
+                        product={currentProduct}
+                        favorite={false}
+                      />
                     </div>
                   </div>
                 </div>
@@ -103,11 +111,17 @@ const Product = (): ReactElement => {
               />
               <div className={styles.mobile_menu}>
                 <div className={styles.mobile_basket}>
-                  <button>Добавить в корзину</button>
+                  <BasketButtons product={currentProduct} favorite={false} />
                 </div>
-                <div className={styles.mobile_heart}>
-                  <button>
-                    <img src={heartIcon} alt="heart" />
+                <div
+                  className={
+                    isFavorite()
+                      ? `${styles.red_mobile} ${styles.mobile_heart}`
+                      : styles.mobile_heart
+                  }
+                >
+                  <button onClick={handleFavorite}>
+                    <Heart />
                   </button>
                 </div>
               </div>

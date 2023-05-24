@@ -1,15 +1,14 @@
 import React, { ReactElement, useEffect } from "react";
 import styles from "./Favorite.module.css";
 import ProductItem from "components/main/products/productItem/ProductItem";
-import { CurrentUser } from "types/types";
+import { ProductType } from "types/types";
 import { v4 } from "uuid";
 import { useAppDispatch, useAppSelector } from "hooks/hooks";
 import { fetchUserFavorite } from "store/slices/userSlice";
 import Loader from "ui/loader/Loader";
-import { useOutletContext } from "react-router-dom";
 
 const Favorite = (): ReactElement => {
-  const user: CurrentUser = useOutletContext();
+  const favorite: ProductType[] = useAppSelector((state) => state.user.currentUser.favorite);
 
   const dispatch = useAppDispatch();
   const isLoading = useAppSelector((state) => state.user.isLoading);
@@ -19,10 +18,10 @@ const Favorite = (): ReactElement => {
   }, [dispatch]);
 
   const getProducts = (): ReactElement[] => {
-    if (user.favorite.length === 0) return [<h3 key={v4()}>Продукты не добавлены</h3>];
+    if (favorite.length === 0) return [<h3 key={v4()}>Продукты не добавлены</h3>];
 
-    return user.favorite.map((product) => (
-      <ProductItem {...product} key={v4()} />
+    return favorite.map((product) => (
+      <ProductItem product={product} key={v4()} />
     ));
   };
 

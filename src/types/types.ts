@@ -43,9 +43,14 @@ export type CurrentUser = {
   uid: string;
   token: string;
   address: AddressType[];
-  basket: string;
+  basket: BasketItemType[]
   favorite: ProductType[];
 };
+
+export type BasketItemType = {
+  product: ProductType;
+  count: number;
+}
 
 export type AddressType = {
   city: string;

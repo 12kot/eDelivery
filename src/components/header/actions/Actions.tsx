@@ -28,17 +28,18 @@ const Actions = (props: Props): ReactElement => {
       <NavLink to={!!userEmail ? "/profile" : "/login"} className={`${styles.action}`}>
           <img src={userIcon} alt="user" />
           <p>{!!userEmail ? "Профиль" : "Войти"}</p>
-        
       </NavLink>
       <NavLink to="/profile/favorite" className={`${styles.action}`}>
           <img src={heartIcon} alt="favorite" />
           <p>Избранное</p>
-        
       </NavLink>
       <NavLink to="/basket" className={`${styles.action}`}>
           <img src={basketIcon} alt="basket" />
           <p>Корзина</p>
-        
+      </NavLink>
+      <NavLink to="/profile/history" className={`${styles.action}`}>
+          <img src={basketIcon} alt="history" />
+          <p>История</p>
       </NavLink>
     </nav>
   );

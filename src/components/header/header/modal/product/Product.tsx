@@ -3,6 +3,7 @@ import { ProductType } from "types/types";
 import styles from "./Product.module.css";
 import { useNavigate } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
+import BasketButtons from "components/basketButtons/BasketButtons";
 
 type Props = {
   product: ProductType;
@@ -20,22 +21,24 @@ const Product = (props: Props): ReactElement => {
   const handleClick = () => {
     props.setActive(false);
     navigate(`category/${props.product.category}/${props.product.id}`);
-  }
+  };
 
   return (
     <div ref={ref} className={styles.container}>
-      <div onClick={handleClick}
-        className={styles.nav_container}
-      >
-        {inView ?<img src={props.product.imageURL} alt={props.product.name} /> : <img src="" alt=""></img> }
+      <div onClick={handleClick} className={styles.nav_container}>
+        {inView ? (
+          <img src={props.product.imageURL} alt={props.product.name} />
+        ) : (
+          <img src="" alt=""></img>
+        )}
         <div className={styles.description}>
           <p>{props.product.name}</p>
           <h5>{props.product.price}</h5>
         </div>
       </div>
-        <div className={styles.add_button}>
-          <button className={styles.button}>В корзину</button>
-        </div>
+      <div className={styles.add_button}>
+        <BasketButtons product={props.product} favorite={false} />
+      </div>
     </div>
   );
 };

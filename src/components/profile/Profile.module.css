@@ -1,6 +1,9 @@
 .container {
   margin: 36px 0 0;
-  min-height: calc(100vh);
+  height: fit-content;
+  min-height: 100vh;
+
+  padding: 0 0 3vh;
 
   display: grid;
   grid-template-columns: repeat(8, 1fr);
@@ -22,6 +25,7 @@
 @media screen and (max-width: 960px) {
   .container {
     margin: 24px 0 0;
+    padding: 0 0 8vh;
 
     display: flex;
     flex-direction: column;

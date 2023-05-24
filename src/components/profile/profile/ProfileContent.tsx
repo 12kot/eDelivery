@@ -4,12 +4,11 @@ import { CurrentUser } from "types/types";
 import UserData from "./userData/UserData";
 import Addresses from "./adresses/Addresses";
 import { logoutUser } from "store/slices/userSlice";
-import { useAppDispatch } from "hooks/hooks";
+import { useAppDispatch, useAppSelector } from "hooks/hooks";
 import Line from "ui/line/Line";
-import { useOutletContext } from "react-router-dom";
 
 const ProfileContent = (): ReactElement => {
-  const user: CurrentUser = useOutletContext()
+  const user: CurrentUser = useAppSelector((state) => state.user.currentUser)
 
   const dispatch = useAppDispatch();
 

@@ -15,6 +15,7 @@ import { AuthUser } from "types/types";
 import { fetchUserData } from "store/slices/userSlice";
 import ProfileContent from "components/profile/profile/ProfileContent";
 import Favorite from "components/profile/favorite/Favorite";
+import Basket from "components/basket/Basket";
 
 const App = () => {
   const userEmail = useAppSelector((state) => state.user.currentUser.email);
@@ -59,12 +60,18 @@ const App = () => {
               </Protected>
             }
           >
-            <Route path="" element={     
-              <ProfileContent />} />
+            <Route path="" element={<ProfileContent />} />
             <Route path="favorite" element={<Favorite />} />
-
           </Route>
 
+          <Route
+            path="/basket"
+            element={
+              <Protected isLoggedIn={!!userEmail} path="/login">
+                <Basket />
+              </Protected>
+            }
+          />
           <Route path="/category/:category" element={<Category />} />
           <Route path="/search/:request" element={<Search />} />
           <Route path="/category/:category/:id" element={<Product />} />
