@@ -9,7 +9,7 @@ import {
 import Loader from "ui/loader/Loader";
 import ProductsSwiper from "components/main/products/ProductsSwiper";
 import { handleFavoriteProduct } from "store/slices/userSlice";
-import BasketButtons from "components/basketButtons/BasketButtons";
+import ProductActionsButtons from "components/productActionsButtons/ProductActionsButtons";
 import Heart from "ui/Heart";
 
 const Product = (): ReactElement => {
@@ -18,7 +18,7 @@ const Product = (): ReactElement => {
 
   const { currentProduct, isLoading } = useAppSelector((state) => state.app);
   const products = useAppSelector((state) => state.app.products.products);
-  const favorite = useAppSelector((state) => state.user.currentUser.favorite);
+  const favoriteItems = useAppSelector((state) => state.user.currentUser.favorite.items);
 
   useEffect(() => {
     if (id) dispatch(fetchProductData({ id: id }));
@@ -33,14 +33,14 @@ const Product = (): ReactElement => {
   }, [category, id, dispatch]);
 
   const isFavorite = () => {
-    for (let product of favorite) if (product.id.toString() === id) return true;
+    for (const product of favoriteItems) if (product.toString() === id) return true;
 
     return false;
   };
 
   const handleFavorite = () => {
     if (!!currentProduct)
-      dispatch(handleFavoriteProduct({ product: currentProduct }));
+      dispatch(handleFavoriteProduct({ productID: currentProduct.id }));
   };
 
   return (
@@ -96,7 +96,7 @@ const Product = (): ReactElement => {
                   >
                     <h2>{currentProduct.price} р.</h2>
                     <div className={styles.button}>
-                      <BasketButtons
+                      <ProductActionsButtons
                         product={currentProduct}
                         favorite={false}
                       />
@@ -111,7 +111,7 @@ const Product = (): ReactElement => {
               />
               <div className={styles.mobile_menu}>
                 <div className={styles.mobile_basket}>
-                  <BasketButtons product={currentProduct} favorite={false} />
+                  <ProductActionsButtons product={currentProduct} favorite={false} />
                 </div>
                 <div
                   className={

@@ -2,7 +2,7 @@ import ProductItem from "components/main/products/productItem/ProductItem";
 import { useAppDispatch, useAppSelector } from "hooks/hooks";
 import React, { ReactElement, useEffect } from "react";
 import { fetchUserBasket } from "store/slices/userSlice";
-import { BasketItemType } from "types/types";
+import { ProductType } from "types/types";
 import { v4 } from "uuid";
 import styles from "./Basket.module.css";
 import Loader from "ui/loader/Loader";
@@ -11,7 +11,7 @@ import { NavLink } from "react-router-dom";
 
 const Basket = (): ReactElement => {
   const dispatch = useAppDispatch();
-  const products = useAppSelector((state) => state.user.currentUser.basket);
+  const products = useAppSelector((state) => state.user.currentUser.basket.products);
   const isLoading = useAppSelector((state) => state.user.isLoading);
 
   useEffect(() => {
@@ -19,15 +19,15 @@ const Basket = (): ReactElement => {
   }, [dispatch]);
 
   const getProducts = (): ReactElement[] => {
-    return products.map((product: BasketItemType) => (
-      <ProductItem product={product.product} key={v4()} />
+    return products.map((product: ProductType) => (
+      <ProductItem product={product} key={v4()} />
     ));
   };
 
   const getPrice = (): number => {
     let n = 0;
     products.forEach((product) => {
-      n += product.product.price;
+      n += product.price;
     });
 
     return n;

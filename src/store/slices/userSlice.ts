@@ -30,25 +30,54 @@ const initialState: UserSlice = {
     uid: "",
     token: "",
     address: [],
-    basket: [],
-    favorite: [],
+    basket: {
+      products: [],
+      items: [],
+    },
+    favorite: {
+      products: [],
+      items: [],
+    },
   },
   isLoading: false,
+};
+
+const _getItems = async (productsID: number[]) => {
+  let products: ProductType[] = [];
+
+  for (const item of productsID) {
+    console.log(item);
+    let data: ProductType[] = await getItemsDB(
+      "products/products",
+      "id",
+      item,
+      1
+    );
+    console.log(data);
+    if (data[0].id) products.push(data[0]);
+  }
+
+  return products;
 };
 
 export const fetchUserFavorite = createAsyncThunk<
   void,
   void,
   { state: RootState }
->("user/fetchuserFavorite", async function (_, { dispatch, getState }) {
+>("user/fetchUserFavorite", async function (_, { dispatch, getState }) {
   dispatch(setIsLoading(true));
+  const userUID = getState().user.currentUser.uid;
 
-  const favorite: ProductType[] = await GetCol(
-    getState().user.currentUser.uid,
-    "favorite"
+  const items: { id: number }[] = await GetCol(userUID, "favorite");
+  const products: ProductType[] = await _getItems(items.map((item) => item.id));
+
+  dispatch(
+    setCurrentUserFavorite({
+      items: items.map((item) => item.id),
+      products: products,
+    })
   );
-  dispatch(setCurrentUserFavorite(favorite));
-
+  
   dispatch(setIsLoading(false));
 });
 
@@ -56,7 +85,7 @@ export const fetchUserAddresses = createAsyncThunk<
   void,
   void,
   { state: RootState }
->("user/fetchuserAddresses", async function (_, { dispatch, getState }) {
+>("user/fetchUserAddresses", async function (_, { dispatch, getState }) {
   dispatch(setIsLoading(true));
 
   const addresses: AddressType[] = await GetCol(
@@ -74,13 +103,12 @@ export const fetchUserBasket = createAsyncThunk<
   { state: RootState }
 >("user/fetchUserBasket", async function (_, { dispatch, getState }) {
   dispatch(setIsLoading(true));
+  const userUID = getState().user.currentUser.uid;
 
-  const basket: BasketItemType[] = await GetCol(
-    getState().user.currentUser.uid,
-    "basket"
-  );
-  dispatch(setCurrentUserBasket(basket));
+  const items: BasketItemType[] = await GetCol(userUID, "basket");
+  const products: ProductType[] = await _getItems(items.map((item) => item.id));
 
+  dispatch(setCurrentUserBasket({ items: items, products: products }));
   dispatch(setIsLoading(false));
 });
 
@@ -157,7 +185,7 @@ export const logoutUser = createAsyncThunk<void>(
 
 export const handleFavoriteProduct = createAsyncThunk<
   void,
-  { product: ProductType },
+  { productID: number },
   { state: RootState }
 >("user/handleFavoriteProduct", async function (props, { getState, dispatch }) {
   dispatch(setIsLoading(true));
@@ -167,15 +195,15 @@ export const handleFavoriteProduct = createAsyncThunk<
     userUID,
     "favorite",
     "id",
-    props.product.id
+    props.productID
   );
 
   if (!!isExists) {
-    await DeleteDoc(userUID, "favorite", props.product.id);
-    dispatch(removeFavoriteProduct(props.product));
+    await DeleteDoc(userUID, "favorite", props.productID);
+    dispatch(removeFavoriteProduct(props.productID));
   } else {
-    await SetProduct(userUID, "favorite", props.product);
-    dispatch(addFavoriteProduct(props.product));
+    await SetProduct(userUID, "favorite", props.productID);
+    dispatch(addFavoriteProduct(props.productID));
   }
 
   dispatch(setIsLoading(false));
@@ -191,7 +219,7 @@ export const handleBasketProduct = createAsyncThunk<
   const product: ProductType[] = await getItemsDB(
     "products/products",
     "id",
-    props.basketItem.product.id,
+    props.basketItem.id,
     1
   );
 
@@ -199,6 +227,7 @@ export const handleBasketProduct = createAsyncThunk<
     dispatch(setIsLoading(false));
     return;
   }
+
   if (product[0].quantity < props.basketItem.count) {
     dispatch(setIsLoading(false));
     return;
@@ -208,18 +237,18 @@ export const handleBasketProduct = createAsyncThunk<
   const isExists: ProductType = await FindDoc(
     userUID,
     "basket",
-    "product.id",
-    props.basketItem.product.id
+    "id",
+    props.basketItem.id
   );
 
   if (!!isExists) {
     if (props.basketItem.count === 0) {
-      await DeleteDoc(userUID, "basket", props.basketItem.product.id);
-      dispatch(removeProductBasket(props.basketItem.product.id));
+      await DeleteDoc(userUID, "basket", props.basketItem.id);
+      dispatch(removeProductBasket(props.basketItem.id));
     } else await UpdateBasketDoc(userUID, "basket", props.basketItem);
     dispatch(
       setCountProductToBasket({
-        productID: props.basketItem.product.id,
+        id: props.basketItem.id,
         count: props.basketItem.count,
       })
     );
@@ -227,7 +256,7 @@ export const handleBasketProduct = createAsyncThunk<
     await SetProduct(
       userUID,
       "basket",
-      props.basketItem.product,
+      props.basketItem.id,
       props.basketItem.count
     );
     dispatch(addProductToBasket(props.basketItem));
@@ -243,14 +272,24 @@ const userSlice = createSlice({
     setCurrentUser(state, action: PayloadAction<AuthUser>) {
       state.currentUser = { ...state.currentUser, ...action.payload };
     },
-    setCurrentUserFavorite(state, action: PayloadAction<ProductType[]>) {
+    setCurrentUserFavorite(
+      state,
+      action: PayloadAction<{ items: number[]; products: ProductType[] }>
+    ) {
       state.currentUser.favorite = action.payload;
     },
     setCurrentUserAddresses(state, action: PayloadAction<AddressType[]>) {
       state.currentUser.address = action.payload;
     },
-    setCurrentUserBasket(state, action: PayloadAction<BasketItemType[]>) {
-      state.currentUser.basket = action.payload;
+    setCurrentUserBasket(
+      state,
+      action: PayloadAction<{
+        items: BasketItemType[];
+        products: ProductType[];
+      }>
+    ) {
+      state.currentUser.basket.items = action.payload.items;
+      state.currentUser.basket.products = action.payload.products;
     },
     removeCurrentUser(state) {
       state.currentUser = initialState.currentUser;
@@ -258,30 +297,41 @@ const userSlice = createSlice({
     setIsLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
     },
-    addFavoriteProduct(state, action: PayloadAction<ProductType>) {
-      state.currentUser.favorite.push(action.payload);
+    addFavoriteProduct(state, action: PayloadAction<number>) {
+      state.currentUser.favorite.items.push(action.payload);
     },
-    removeFavoriteProduct(state, action: PayloadAction<ProductType>) {
-      state.currentUser.favorite = state.currentUser.favorite.filter(
-        (product) => product.id !== action.payload.id
-      );
+    removeFavoriteProduct(state, action: PayloadAction<number>) {
+      state.currentUser.favorite.items =
+        state.currentUser.favorite.items.filter(
+          (product) => product !== action.payload
+        );
+
+      state.currentUser.favorite.products =
+        state.currentUser.favorite.products.filter(
+          (product) => product.id !== action.payload
+        );
     },
     addProductToBasket(state, action: PayloadAction<BasketItemType>) {
-      state.currentUser.basket.push(action.payload);
+      state.currentUser.basket.items.push(action.payload);
     },
     setCountProductToBasket(
       state,
-      action: PayloadAction<{ productID: number; count: number }>
+      action: PayloadAction<{ id: number; count: number }>
     ) {
-      state.currentUser.basket.forEach((product) => {
-        if (product.product.id === action.payload.productID)
+      state.currentUser.basket.items.forEach((product) => {
+        if (product.id === action.payload.id)
           product.count = action.payload.count;
       });
     },
     removeProductBasket(state, action: PayloadAction<number>) {
-      state.currentUser.basket = state.currentUser.basket.filter(
-        (product) => product.product.id !== action.payload
+      state.currentUser.basket.items = state.currentUser.basket.items.filter(
+        (product) => product.id !== action.payload
       );
+
+      state.currentUser.basket.products =
+        state.currentUser.basket.products.filter(
+          (product) => product.id !== action.payload
+        );
     },
   },
 });

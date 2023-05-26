@@ -3,7 +3,7 @@ import { ProductType } from "types/types";
 import styles from "./Product.module.css";
 import { useNavigate } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
-import BasketButtons from "components/basketButtons/BasketButtons";
+import ProductActionsButtons from "components/productActionsButtons/ProductActionsButtons";
 
 type Props = {
   product: ProductType;
@@ -37,7 +37,7 @@ const Product = (props: Props): ReactElement => {
         </div>
       </div>
       <div className={styles.add_button}>
-        <BasketButtons product={props.product} favorite={false} />
+        <ProductActionsButtons product={props.product} favorite={false} />
       </div>
     </div>
   );

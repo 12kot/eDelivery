@@ -10,7 +10,7 @@ const UpdateBasketDoc = async (
   const washingtonRef = doc(
     db,
     `users/${uid}/${collType}`,
-    item.product.id.toString()
+    item.id.toString()
   );
 
   await updateDoc(washingtonRef, {

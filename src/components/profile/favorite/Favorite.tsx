@@ -8,7 +8,7 @@ import { fetchUserFavorite } from "store/slices/userSlice";
 import Loader from "ui/loader/Loader";
 
 const Favorite = (): ReactElement => {
-  const favorite: ProductType[] = useAppSelector((state) => state.user.currentUser.favorite);
+  const products: ProductType[] = useAppSelector((state) => state.user.currentUser.favorite.products);
 
   const dispatch = useAppDispatch();
   const isLoading = useAppSelector((state) => state.user.isLoading);
@@ -18,9 +18,9 @@ const Favorite = (): ReactElement => {
   }, [dispatch]);
 
   const getProducts = (): ReactElement[] => {
-    if (favorite.length === 0) return [<h3 key={v4()}>Продукты не добавлены</h3>];
+    if (products.length === 0) return [<h3 key={v4()}>Продукты не добавлены</h3>];
 
-    return favorite.map((product) => (
+    return products.map((product) => (
       <ProductItem product={product} key={v4()} />
     ));
   };

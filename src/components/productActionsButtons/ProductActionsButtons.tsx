@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import styles from "./BasketButtons.module.css";
+import styles from "./ProductActionsButtons.module.css";
 import { ProductType } from "types/types";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "hooks/hooks";
@@ -13,34 +13,33 @@ type Props = {
   favorite: boolean;
 };
 
-const BasketButtons = (props: Props): ReactElement => {
+const ProductActionsButtons = (props: Props): ReactElement => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const isLoggedIn: boolean = !!useAppSelector(
     (state) => state.user.currentUser.email
   );
-  const { favorite, basket } = useAppSelector(
-    (state) => state.user.currentUser
-  );
+  const favoriteItems = useAppSelector((state) => state.user.currentUser.favorite.items);
+  const basketItems = useAppSelector((state) => state.user.currentUser.basket.items);
   const isLoading = useAppSelector((state) => state.user.isLoading);
   let count = 0;
 
   const isFavorite = (): boolean => {
-    for (let product of favorite)
-      if (product.id === props.product.id) return true;
+    for (let item of favoriteItems)
+      if (item === props.product.id) return true;
 
     return false;
   };
 
   const handleFavorite = (): void => {
-    if (isLoggedIn) dispatch(handleFavoriteProduct({ product: props.product }));
+    if (isLoggedIn) dispatch(handleFavoriteProduct({ productID: props.product.id }));
     else navigate("/login");
   };
 
   const inBasket = (): boolean => {
-    for (let product of basket)
-      if (product.product.id === props.product.id) {
-        count = product.count;
+    for (let item of basketItems)
+      if (item.id === props.product.id) {
+        count = item.count;
         return true;
       }
 
@@ -51,7 +50,7 @@ const BasketButtons = (props: Props): ReactElement => {
     if (isLoggedIn)
       dispatch(
         handleBasketProduct({
-          basketItem: { product: props.product, count: ++count },
+          basketItem: { id: props.product.id, count: ++count },
         })
       );
     else navigate("/login");
@@ -61,7 +60,7 @@ const BasketButtons = (props: Props): ReactElement => {
     if (isLoggedIn)
       dispatch(
         handleBasketProduct({
-          basketItem: { product: props.product, count: --count },
+          basketItem: { id: props.product.id, count: --count },
         })
       );
     else navigate("/login");
@@ -111,4 +110,4 @@ const BasketButtons = (props: Props): ReactElement => {
   );
 };
 
-export default BasketButtons;
+export default ProductActionsButtons;
