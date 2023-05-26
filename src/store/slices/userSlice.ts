@@ -1,6 +1,6 @@
 import DeleteDoc from "API/DB/DeleteDoc";
 import { RootState } from "./../index";
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import FindDoc from "API/DB/FindDoc";
 import GetCol from "API/DB/GetCol";
 import SetProduct from "API/DB/SetProduct";
@@ -61,135 +61,121 @@ const _getItems = async (productsID: number[]) => {
 };
 
 export const fetchUserFavorite = createAsyncThunk<
-  void,
-  void,
+  { items: number[]; products: ProductType[] },
+  undefined,
   { state: RootState }
->("user/fetchUserFavorite", async function (_, { dispatch, getState }) {
-  dispatch(setIsLoading(true));
+>("user/fetchUserFavorite", async (_, { getState }) => {
   const userUID = getState().user.currentUser.uid;
 
   const items: { id: number }[] = await GetCol(userUID, "favorite");
   const products: ProductType[] = await _getItems(items.map((item) => item.id));
 
-  dispatch(
-    setCurrentUserFavorite({
-      items: items.map((item) => item.id),
-      products: products,
-    })
-  );
-  
-  dispatch(setIsLoading(false));
+  return {
+    items: items.map((item) => item.id),
+    products: products,
+  };
 });
 
 export const fetchUserAddresses = createAsyncThunk<
-  void,
-  void,
+  AddressType[],
+  undefined,
   { state: RootState }
->("user/fetchUserAddresses", async function (_, { dispatch, getState }) {
-  dispatch(setIsLoading(true));
-
+>("user/fetchUserAddresses", async (_, { getState }) => {
   const addresses: AddressType[] = await GetCol(
     getState().user.currentUser.uid,
     "addresses"
   );
-  dispatch(setCurrentUserAddresses(addresses));
 
-  dispatch(setIsLoading(false));
+  return addresses;
 });
 
 export const fetchUserBasket = createAsyncThunk<
-  void,
-  void,
+  { items: BasketItemType[]; products: ProductType[] },
+  undefined,
   { state: RootState }
->("user/fetchUserBasket", async function (_, { dispatch, getState }) {
-  dispatch(setIsLoading(true));
+>("user/fetchUserBasket", async (_, { getState }) => {
   const userUID = getState().user.currentUser.uid;
 
   const items: BasketItemType[] = await GetCol(userUID, "basket");
   const products: ProductType[] = await _getItems(items.map((item) => item.id));
 
-  dispatch(setCurrentUserBasket({ items: items, products: products }));
-  dispatch(setIsLoading(false));
+  return { items: items, products: products };
 });
 
 export const fetchUserData = createAsyncThunk<
   void,
-  { user: AuthUser },
+  AuthUser,
   { state: RootState }
->("user/fetchUserData", async function (props, { dispatch, getState }) {
+>("user/fetchUserData", async function (props, { getState, dispatch }) {
   //можно проверку на юзера сделать
-  dispatch(setCurrentUser(props.user));
+  dispatch(setUser(props));
+
   dispatch(fetchUserFavorite());
   dispatch(fetchUserBasket());
   dispatch(fetchUserAddresses());
 });
 
 export const loginUserByGoogle = createAsyncThunk<
-  void,
-  void,
+  AuthUser,
+  undefined,
   { state: RootState }
->("user/loginUserByGoogle", async function (_, { dispatch }) {
-  dispatch(setIsLoading(true));
-
+>("user/loginUserByGoogle", async (_, { dispatch, rejectWithValue }) => {
   let data: AuthUser = await LoginByGoogle();
   if (data.email) {
-    CreateUser(data);
-    dispatch(fetchUserData({ user: data }));
+    await CreateUser(data);
+    dispatch(fetchUserData(data));
+    return data;
   }
 
-  dispatch(setIsLoading(false));
+  return rejectWithValue("Error");
 });
 
 export const loginUserByEmail = createAsyncThunk<
-  void,
+  AuthUser,
   { email: string; password: string },
   { state: RootState }
->("user/loginUserByEmail", async function (props, { dispatch }) {
-  dispatch(setIsLoading(true));
-
+>("user/loginUserByEmail", async (props, { dispatch, rejectWithValue }) => {
   let data: AuthUser = await LoginByEmail(props.email, props.password);
   if (data.email) {
-    dispatch(fetchUserData({ user: data }));
+    dispatch(fetchUserData(data));
+    return data;
   }
 
-  dispatch(setIsLoading(false));
+  return rejectWithValue("Error");
 });
 
 export const createUserWithEmail = createAsyncThunk<
-  void,
+  AuthUser,
   { email: string; password: string; repeatPassword: string },
   { state: RootState }
->("user/createUserWithEmail", async function (props, { dispatch }) {
-  dispatch(setIsLoading(true));
-  //ВАЛИДАЦИЯ. СОЗДАТЬ ЯЧЕЙКУ В БД
+>("user/createUserWithEmail", async (props, { dispatch, rejectWithValue }) => {
+  //ВАЛИДАЦИЯ
   let data: AuthUser = await CreateWithEmailAndPassword(
     props.email,
     props.password
   );
 
   if (data.email) {
-    CreateUser(data);
-    dispatch(fetchUserData({ user: data }));
+    await CreateUser(data);
+    dispatch(fetchUserData(data));
+    return data;
   }
 
-  dispatch(setIsLoading(false));
+  return rejectWithValue("Error");
 });
 
 export const logoutUser = createAsyncThunk<void>(
   "user/logoutUser",
-  async function (_, { dispatch }) {
+  async () => {
     await Logout();
-    dispatch(removeCurrentUser());
   }
 );
 
 export const handleFavoriteProduct = createAsyncThunk<
-  void,
+  { type: string; id: number },
   { productID: number },
   { state: RootState }
->("user/handleFavoriteProduct", async function (props, { getState, dispatch }) {
-  dispatch(setIsLoading(true));
-
+>("user/handleFavoriteProduct", async (props, { getState }) => {
   const userUID = getState().user.currentUser.uid;
   const isExists: ProductType = await FindDoc(
     userUID,
@@ -200,22 +186,18 @@ export const handleFavoriteProduct = createAsyncThunk<
 
   if (!!isExists) {
     await DeleteDoc(userUID, "favorite", props.productID);
-    dispatch(removeFavoriteProduct(props.productID));
+    return { type: "DELETE", id: props.productID };
   } else {
     await SetProduct(userUID, "favorite", props.productID);
-    dispatch(addFavoriteProduct(props.productID));
+    return { type: "ADD", id: props.productID };
   }
-
-  dispatch(setIsLoading(false));
 });
 
 export const handleBasketProduct = createAsyncThunk<
-  void,
+  { type: string; basketItem: BasketItemType },
   { basketItem: BasketItemType },
   { state: RootState }
->("user/handleBasketProduct", async function (props, { dispatch, getState }) {
-  dispatch(setIsLoading(true));
-
+>("user/handleBasketProduct", async (props, { getState, rejectWithValue }) => {
   const product: ProductType[] = await getItemsDB(
     "products/products",
     "id",
@@ -224,13 +206,11 @@ export const handleBasketProduct = createAsyncThunk<
   );
 
   if (!product[0]) {
-    dispatch(setIsLoading(false));
-    return;
+    return rejectWithValue("Error");
   }
 
   if (product[0].quantity < props.basketItem.count) {
-    dispatch(setIsLoading(false));
-    return;
+    return rejectWithValue("Error");
   }
 
   const userUID = getState().user.currentUser.uid;
@@ -244,109 +224,146 @@ export const handleBasketProduct = createAsyncThunk<
   if (!!isExists) {
     if (props.basketItem.count === 0) {
       await DeleteDoc(userUID, "basket", props.basketItem.id);
-      dispatch(removeProductBasket(props.basketItem.id));
-    } else await UpdateBasketDoc(userUID, "basket", props.basketItem);
-    dispatch(
-      setCountProductToBasket({
-        id: props.basketItem.id,
-        count: props.basketItem.count,
-      })
-    );
-  } else {
-    await SetProduct(
-      userUID,
-      "basket",
-      props.basketItem.id,
-      props.basketItem.count
-    );
-    dispatch(addProductToBasket(props.basketItem));
+      return { type: "REMOVE", basketItem: props.basketItem };
+    }
+
+    await UpdateBasketDoc(userUID, "basket", props.basketItem);
+    return { type: "SET_COUNT", basketItem: props.basketItem };
   }
 
-  dispatch(setIsLoading(false));
+  await SetProduct(
+    userUID,
+    "basket",
+    props.basketItem.id,
+    props.basketItem.count
+  );
+  return { type: "ADD", basketItem: props.basketItem };
 });
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setCurrentUser(state, action: PayloadAction<AuthUser>) {
-      state.currentUser = { ...state.currentUser, ...action.payload };
+    setUser(state, action) {
+      state.currentUser.email = action.payload.email;
+      state.currentUser.uid = action.payload.uid;
+      state.currentUser.token = action.payload.token;
     },
-    setCurrentUserFavorite(
-      state,
-      action: PayloadAction<{ items: number[]; products: ProductType[] }>
-    ) {
-      state.currentUser.favorite = action.payload;
-    },
-    setCurrentUserAddresses(state, action: PayloadAction<AddressType[]>) {
-      state.currentUser.address = action.payload;
-    },
-    setCurrentUserBasket(
-      state,
-      action: PayloadAction<{
-        items: BasketItemType[];
-        products: ProductType[];
-      }>
-    ) {
-      state.currentUser.basket.items = action.payload.items;
-      state.currentUser.basket.products = action.payload.products;
-    },
-    removeCurrentUser(state) {
-      state.currentUser = initialState.currentUser;
-    },
-    setIsLoading(state, action: PayloadAction<boolean>) {
-      state.isLoading = action.payload;
-    },
-    addFavoriteProduct(state, action: PayloadAction<number>) {
-      state.currentUser.favorite.items.push(action.payload);
-    },
-    removeFavoriteProduct(state, action: PayloadAction<number>) {
-      state.currentUser.favorite.items =
-        state.currentUser.favorite.items.filter(
-          (product) => product !== action.payload
-        );
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUserFavorite.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchUserFavorite.fulfilled, (state, action) => {
+        state.currentUser.favorite = action.payload;
+        state.isLoading = false;
+      })
 
-      state.currentUser.favorite.products =
-        state.currentUser.favorite.products.filter(
-          (product) => product.id !== action.payload
-        );
-    },
-    addProductToBasket(state, action: PayloadAction<BasketItemType>) {
-      state.currentUser.basket.items.push(action.payload);
-    },
-    setCountProductToBasket(
-      state,
-      action: PayloadAction<{ id: number; count: number }>
-    ) {
-      state.currentUser.basket.items.forEach((product) => {
-        if (product.id === action.payload.id)
-          product.count = action.payload.count;
+      .addCase(fetchUserAddresses.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchUserAddresses.fulfilled, (state, action) => {
+        state.currentUser.address = action.payload;
+        state.isLoading = false;
+      })
+
+      .addCase(fetchUserBasket.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchUserBasket.fulfilled, (state, action) => {
+        state.currentUser.basket = action.payload;
+        state.isLoading = false;
+      })
+
+      .addCase(loginUserByGoogle.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(loginUserByGoogle.fulfilled, (state, action) => {
+        state.isLoading = false;
+      })
+      .addCase(loginUserByGoogle.rejected, (state, action) => {
+        state.isLoading = false;
+      })
+
+      .addCase(loginUserByEmail.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(loginUserByEmail.fulfilled, (state, action) => {
+        state.isLoading = false;
+      })
+      .addCase(loginUserByEmail.rejected, (state, action) => {
+        state.isLoading = false;
+      })
+
+      .addCase(createUserWithEmail.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(createUserWithEmail.fulfilled, (state, action) => {
+        state.isLoading = false;
+      })
+      .addCase(createUserWithEmail.rejected, (state, action) => {
+        state.isLoading = false;
+      })
+
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.currentUser = initialState.currentUser;
+      })
+
+      .addCase(handleFavoriteProduct.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(handleFavoriteProduct.fulfilled, (state, action) => {
+        if (action.payload.type === "DELETE") {
+          state.currentUser.favorite.items =
+            state.currentUser.favorite.items.filter(
+              (product) => product !== action.payload.id
+            );
+
+          state.currentUser.favorite.products =
+            state.currentUser.favorite.products.filter(
+              (product) => product.id !== action.payload.id
+            );
+        } else {
+          state.currentUser.favorite.items.push(action.payload.id);
+        }
+
+        state.isLoading = false;
+      })
+
+      .addCase(handleBasketProduct.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(handleBasketProduct.fulfilled, (state, action) => {
+        switch (action.payload.type) {
+          case "ADD":
+            state.currentUser.basket.items.push(action.payload.basketItem);
+            break;
+          case "REMOVE":
+            state.currentUser.basket.items =
+              state.currentUser.basket.items.filter(
+                (product) => product.id !== action.payload.basketItem.id
+              );
+
+            state.currentUser.basket.products =
+              state.currentUser.basket.products.filter(
+                (product) => product.id !== action.payload.basketItem.id
+              );
+            break;
+          case "SET_COUNT":
+            state.currentUser.basket.items.forEach((product) => {
+              if (product.id === action.payload.basketItem.id)
+                product.count = action.payload.basketItem.count;
+            });
+        }
+
+        state.isLoading = false;
+      })
+      .addCase(handleBasketProduct.rejected, (state, action) => {
+        state.isLoading = false;
       });
-    },
-    removeProductBasket(state, action: PayloadAction<number>) {
-      state.currentUser.basket.items = state.currentUser.basket.items.filter(
-        (product) => product.id !== action.payload
-      );
-
-      state.currentUser.basket.products =
-        state.currentUser.basket.products.filter(
-          (product) => product.id !== action.payload
-        );
-    },
   },
 });
 
-const {
-  setCurrentUser,
-  setCurrentUserFavorite,
-  setCurrentUserBasket,
-  setCurrentUserAddresses,
-  setIsLoading,
-  removeCurrentUser,
-  addFavoriteProduct,
-  removeFavoriteProduct,
-  addProductToBasket,
-  setCountProductToBasket,
-  removeProductBasket,
-} = userSlice.actions;
+const { setUser } = userSlice.actions;
 export default userSlice;

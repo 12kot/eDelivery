@@ -24,7 +24,7 @@ const App = () => {
   useEffect(() => {
     const user: AuthUser = JSON.parse(localStorage.getItem("user") as string);
     if (user) {
-      dispatch(fetchUserData({ user: user }));
+      dispatch(fetchUserData(user));
     }
   }, [dispatch]);
 
