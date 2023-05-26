@@ -12,6 +12,7 @@ import { NavLink } from "react-router-dom";
 const Basket = (): ReactElement => {
   const dispatch = useAppDispatch();
   const products = useAppSelector((state) => state.user.currentUser.basket.products);
+  const items = useAppSelector((state) => state.user.currentUser.basket.items);
   const isLoading = useAppSelector((state) => state.user.isLoading);
 
   useEffect(() => {
@@ -27,7 +28,8 @@ const Basket = (): ReactElement => {
   const getPrice = (): number => {
     let n = 0;
     products.forEach((product) => {
-      n += product.price;
+      const count = items.filter((item) => item.id === product.id);
+      n += product.price * count[0].count;
     });
 
     return n;
