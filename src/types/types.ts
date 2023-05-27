@@ -42,9 +42,10 @@ export type CurrentUser = {
   email: string;
   uid: string;
   token: string;
-  address: AddressType[];
+  addresses: AddressType[];
   basket: BasketType;
   favorite: FavoriteType;
+  currentAddress: AddressType;
 };
 
 export type FavoriteType = {
@@ -70,4 +71,5 @@ export type AddressType = {
   entrance: string;
   floor: string;
   flat: string;
+  id: string;
 };

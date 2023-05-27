@@ -9,6 +9,7 @@ import {
 } from "store/slices/appSlice";
 import ProductItem from "components/main/products/productItem/ProductItem";
 import { v4 } from "uuid";
+import Loader from "ui/loader/Loader";
 
 type MyParams = {
   category: string;
@@ -17,19 +18,21 @@ type MyParams = {
 const Category = (): ReactElement => {
   const { category } = useParams<keyof MyParams>() as MyParams;
   const [numberOfProducts, setNumberOfProducts] = useState(3);
-  const { products, currentCategory, totalNumberOfItems } =
-    useAppSelector((state) => state.app);
+  const { products, currentCategory, totalNumberOfItems, isLoading } = useAppSelector(
+    (state) => state.app
+  );
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    let equalKey = "category", equalValue: string | boolean = category;
-    
+    let equalKey = "category",
+      equalValue: string | boolean = category;
+
     if (category === "discounts") {
       equalKey = "isDiscount";
       equalValue = true;
     }
-    
+
     dispatch(
       fetchCollectionProductsData({
         equalKey: equalKey,
@@ -54,6 +57,7 @@ const Category = (): ReactElement => {
 
   return (
     <div>
+      {isLoading ? <Loader /> : <></>}
       {currentCategory ? (
         <div className={styles.container}>
           <NavLink to="/" className={styles.back_home}>
@@ -78,7 +82,9 @@ const Category = (): ReactElement => {
             )}
           </div>
         </div>
-      ) : <></>}
+      ) : (
+        <h2>Категория не найдена</h2>
+      )}
     </div>
   );
 };

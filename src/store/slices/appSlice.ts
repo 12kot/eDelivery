@@ -164,28 +164,16 @@ const appSlice = createSlice({
         state.isLoading = false;
       })
 
-      .addCase(fetchNumberOfItems.pending, (state, action) => {
-       // state.isLoading = true;
-      })
       .addCase(fetchNumberOfItems.fulfilled, (state, action) => {
         state.totalNumberOfItems = action.payload;
-        //state.isLoading = false;
       })
 
-      .addCase(fetchSearchItems.pending, (state, action) => {
-       // state.isLoading = true;
-      })
       .addCase(fetchSearchItems.fulfilled, (state, action) => {
         state.products.search.products = action.payload;
-        //state.isLoading = false;
       })
 
-      .addCase(fetchNumberOfSearchItems.pending, (state, action) => {
-       // state.isLoading = true;
-      })
       .addCase(fetchNumberOfSearchItems.fulfilled, (state, action) => {
         state.products.search.totalNumberOfItems = action.payload;
-        //state.isLoading = false;
       });
   },
 });

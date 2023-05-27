@@ -11,7 +11,9 @@ import { NavLink } from "react-router-dom";
 
 const Basket = (): ReactElement => {
   const dispatch = useAppDispatch();
-  const products = useAppSelector((state) => state.user.currentUser.basket.products);
+  const products = useAppSelector(
+    (state) => state.user.currentUser.basket.products
+  );
   const items = useAppSelector((state) => state.user.currentUser.basket.items);
   const isLoading = useAppSelector((state) => state.user.isLoading);
 
@@ -35,15 +37,13 @@ const Basket = (): ReactElement => {
     return n;
   };
 
-  const handleCreateOrder = (): void => {
-
-  }
+  const handleCreateOrder = (): void => {};
 
   return (
     <>
-      {isLoading ? (
-        <Loader />
-      ) : products.length === 0 ? (
+      {isLoading ? <Loader /> : <></>}
+      
+      {products.length === 0 ? (
         <div className={styles.basketIsNull}>
           <h2>Козина пуста</h2>
           <NavLink to="/">Отправиться за покупками</NavLink>
@@ -74,6 +74,7 @@ const Basket = (): ReactElement => {
                     entrance: "1",
                     floor: "1",
                     flat: "2",
+                    id: "1"
                   }}
                 />
               </span>
@@ -82,7 +83,9 @@ const Basket = (): ReactElement => {
                   Общая стоимость: <strong>{getPrice().toFixed(2)}</strong>р.
                 </p>
               </span>
-              <button className={styles.button} onClick={handleCreateOrder}>Оформить заказ</button>
+              <button className={styles.button} onClick={handleCreateOrder}>
+                Оформить заказ
+              </button>
             </div>
           </div>
         </div>

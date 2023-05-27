@@ -1,42 +1,34 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useState } from "react";
 import styles from "./Addreses.module.css";
-import { AddressType } from "types/types";
 import Address from "./address/Address";
 import { v4 } from "uuid";
+import { useAppSelector } from "hooks/hooks";
+import AddAddressModal from "./addressModal/AddressModal";
+import Loader from "ui/loader/Loader";
 
-type Props = {
-  addresses?: AddressType[];
-};
+const Addresses = (): ReactElement => {
+  const addresses = useAppSelector((state) => state.user.currentUser.addresses);
+  const isLoading = useAppSelector((state) => state.user.isLoading);
+  const [isActive, setIsActive] = useState(false);
 
-const Addresses = (props: Props): ReactElement => {
   const getAddresses = (): ReactElement[] => {
-    if (props.addresses)
-      return props.addresses.map((address) => (
-        <Address address={address} key={v4()} />
-      ));
-
-    
-    //ТУТ ДОЛЖЕН БЫТЬ ПУСТОЙ ОБЪЕКТ
-    return [
-      <Address
-        address={{
-          city: "Гродно",
-          street: "БЛК",
-          houseNumber: "3",
-          block: "1",
-          entrance: "1",
-          floor: "1",
-          flat: "2",
-        }}
-      />,
-    ];
+    return addresses.map((address) => <Address address={address} key={v4()} />);
   };
 
   return (
     <div className={styles.container}>
+      {isLoading ? <Loader /> : <></>}
       <h3>Адреса доставки</h3>
       <div className={styles.addresses}>{getAddresses()}</div>
-      <button className={styles.add_address}>Добавить новый адрес</button>
+      <button
+        className={styles.add_address}
+        onClick={() => {
+          setIsActive(true);
+        }}
+      >
+        Добавить новый адрес
+      </button>
+      <AddAddressModal isActive={isActive} setIsActive={ setIsActive } />
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { RootState } from "./../index";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import FindDoc from "API/DB/FindDoc";
 import GetCol from "API/DB/GetCol";
-import SetProduct from "API/DB/SetProduct";
+import SetDoc from "API/DB/SetDoc";
 import CreateWithEmailAndPassword from "API/auth/CreateWithEmail";
 import LoginByEmail from "API/auth/LoginByEmail";
 import LoginByGoogle from "API/auth/LoginByGoogle";
@@ -18,6 +18,7 @@ import {
 import CreateUser from "API/DB/CreateUser";
 import getItemsDB from "API/realtimeDB/getItemsDB";
 import UpdateBasketDoc from "API/DB/UpdateBasketDoc";
+import { v4 } from "uuid";
 
 type UserSlice = {
   currentUser: CurrentUser;
@@ -29,7 +30,17 @@ const initialState: UserSlice = {
     email: "",
     uid: "",
     token: "",
-    address: [],
+    addresses: [],
+    currentAddress: {
+      city: "",
+      street: "",
+      houseNumber: "",
+      block: "",
+      entrance: "",
+      floor: "",
+      flat: "",
+      id: "",
+    },
     basket: {
       products: [],
       items: [],
@@ -187,7 +198,9 @@ export const handleFavoriteProduct = createAsyncThunk<
     await DeleteDoc(userUID, "favorite", props.productID);
     return { type: "DELETE", id: props.productID };
   } else {
-    await SetProduct(userUID, "favorite", props.productID);
+    await SetDoc(userUID, "favorite", props.productID.toString(), {
+      id: props.productID,
+    });
     return { type: "ADD", id: props.productID };
   }
 });
@@ -230,13 +243,25 @@ export const handleBasketProduct = createAsyncThunk<
     return { type: "SET_COUNT", basketItem: props.basketItem };
   }
 
-  await SetProduct(
-    userUID,
-    "basket",
-    props.basketItem.id,
-    props.basketItem.count
-  );
+  await SetDoc(userUID, "basket", props.basketItem.id.toString(), {
+    id: props.basketItem.id,
+    count: props.basketItem.count,
+  });
   return { type: "ADD", basketItem: props.basketItem };
+});
+
+//ДОРАБОТКИ НЕ ТРЕБУЮТСЯ
+export const handleAddress = createAsyncThunk<
+  AddressType,
+  AddressType,
+  { state: RootState }
+>("user/handleAddress", async (props, { getState }) => {
+  const userUID = getState().user.currentUser.uid;
+
+  if (!props.id) props.id = v4();
+  await SetDoc(userUID, "addresses", props.id, props);
+
+  return props;
 });
 
 const userSlice = createSlice({
@@ -263,7 +288,7 @@ const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(fetchUserAddresses.fulfilled, (state, action) => {
-        state.currentUser.address = action.payload;
+        state.currentUser.addresses = action.payload;
         state.isLoading = false;
       })
 
@@ -359,6 +384,19 @@ const userSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(handleBasketProduct.rejected, (state, action) => {
+        state.isLoading = false;
+      })
+
+      .addCase(handleAddress.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(handleAddress.fulfilled, (state, action) => {
+        if (true) {
+          //если адреса нет в базе, то добавляем. Проверяем по ID в цикле for, сразу редактируя, если надо
+          state.currentUser.addresses.push(action.payload);
+          state.currentUser.currentAddress = action.payload;
+        }
+
         state.isLoading = false;
       });
   },

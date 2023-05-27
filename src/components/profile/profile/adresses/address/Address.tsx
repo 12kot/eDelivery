@@ -9,7 +9,7 @@ type Props = {
 const Address = (props: Props): ReactElement => {
   return (
     <div className={styles.container}>
-      <p>{`${props.address.city}, ${props.address.street}, д. ${props.address.block}, п. ${props.address.entrance}`}</p>
+      <p>{`${props.address.city}, ${props.address.street}, д. ${props.address.houseNumber}`} {props.address.entrance ? `, п. ${props.address.entrance}` : ""}</p>
     </div>
   );
 };

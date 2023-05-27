@@ -16,6 +16,7 @@ import { fetchUserData } from "store/slices/userSlice";
 import ProfileContent from "components/profile/profile/ProfileContent";
 import Favorite from "components/profile/favorite/Favorite";
 import Basket from "components/basket/Basket";
+import History from "components/profile/history/History";
 
 const App = () => {
   const userEmail = useAppSelector((state) => state.user.currentUser.email);
@@ -62,6 +63,7 @@ const App = () => {
           >
             <Route path="" element={<ProfileContent />} />
             <Route path="favorite" element={<Favorite />} />
+            <Route path="history" element={<History />} />
           </Route>
 
           <Route
