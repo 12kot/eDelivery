@@ -46,14 +46,13 @@ const _getItems = async (productsID: number[]) => {
   let products: ProductType[] = [];
 
   for (const item of productsID) {
-    console.log(item);
     let data: ProductType[] = await getItemsDB(
       "products/products",
       "id",
       item,
       1
     );
-    console.log(data);
+
     if (data[0].id) products.push(data[0]);
   }
 

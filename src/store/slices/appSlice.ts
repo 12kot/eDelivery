@@ -4,7 +4,7 @@ import {
   ProductType,
 } from "./../../types/types";
 import { CategoryType } from "types/types";
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import getItemsDB from "API/realtimeDB/getItemsDB";
 import getNumberItems from "API/realtimeDB/getNumberOfItems";
 import getSearchItems from "API/realtimeDB/getSearchItems";
@@ -36,40 +36,32 @@ const initialState: AppType = {
   banners: [],
 };
 
-export const fetchCollectionCategoriesData = createAsyncThunk<void>(
+export const fetchCollectionCategoriesData = createAsyncThunk<CategoryType[]>(
   "app/fetchCollectionCategoriesData",
-  async function (_, { dispatch }) {
-    dispatch(setIsLoading(true));
+  async () => {
     const data: CategoryType[] = await getItemsDB("categories", null, null, 15);
-
-    dispatch(setCategories(Object.values(data)));
-
-    dispatch(setIsLoading(false));
+    return Object.values(data);
   }
 );
 
-export const fetchCategoryData = createAsyncThunk<void, { category: string }>(
-  "app/fetchProductData",
-  async function (props, { dispatch }) {
-    dispatch(setIsLoading(true));
-    const data: CategoryType[] = await getItemsDB(
-      "categories",
-      "link",
-      `category/${props.category}`,
-      1
-    );
+export const fetchCategoryData = createAsyncThunk<
+  CategoryType,
+  { category: string }
+>("app/fetchCategoryData", async (props) => {
+  const data: CategoryType[] = await getItemsDB(
+    "categories",
+    "link",
+    `category/${props.category}`,
+    1
+  );
 
-    if (data) dispatch(setCurrentCategory(data[0]));
-
-    dispatch(setIsLoading(false));
-  }
-);
+  return data[0];
+});
 
 export const fetchCollectionProductsData = createAsyncThunk<
-  void,
+  ProductType[],
   { equalKey: string; equalValue: string | boolean | null; count: number }
->("app/fetchCollectionData", async function (props, { dispatch }) {
-  dispatch(setIsLoading(true));
+>("app/fetchCollectionData", async (props) => {
   const data: ProductType[] = await getItemsDB(
     "products/products",
     props.equalKey,
@@ -77,14 +69,12 @@ export const fetchCollectionProductsData = createAsyncThunk<
     props.count
   );
 
-  dispatch(setProducts(Object.values(data)));
-  dispatch(setIsLoading(false));
+  return Object.values(data);
 });
 
-export const fetchProductData = createAsyncThunk<void, { id: string }>(
+export const fetchProductData = createAsyncThunk<ProductType, { id: string }>(
   "app/fetchProductData",
-  async function (props, { dispatch }) {
-    dispatch(setIsLoading(true));
+  async (props) => {
     const data: ProductType[] = await getItemsDB(
       "products/products",
       "id",
@@ -92,86 +82,112 @@ export const fetchProductData = createAsyncThunk<void, { id: string }>(
       1
     );
 
-    if (data) dispatch(setCurrentProduct(data[0]));
-
-    dispatch(setIsLoading(false));
+    return data[0];
   }
 );
 
 export const fetchNumberOfItems = createAsyncThunk<
-  void,
+  number,
   { equalKey: string; equalValue: string | boolean }
->("app/fetchNumberOfItems", async function (props, { dispatch }) {
+>("app/fetchNumberOfItems", async (props) => {
   const count: number = await getNumberItems(
     "products/products",
     props.equalKey,
     props.equalValue
   );
 
-  dispatch(setNumberOfProducts(count));
+  return count;
 });
 
 export const fetchSearchItems = createAsyncThunk<
-  void,
-  { equalKey: string; equalValue: string, count: number }
->("app/fetchNumberOfItems", async function (props, { dispatch }) {
-  const products: ProductType[] = await getSearchItems("products/products", props.equalKey, props.equalValue, props.count);
+  ProductType[],
+  { equalKey: string; equalValue: string; count: number }
+>("app/fetchSearchItems", async (props) => {
+  const products: ProductType[] = await getSearchItems(
+    "products/products",
+    props.equalKey,
+    props.equalValue.toLowerCase(),
+    props.count
+  );
 
-  dispatch(setSearchProducts(Object.values(products)));
+  return Object.values(products);
 });
 
 export const fetchNumberOfSearchItems = createAsyncThunk<
-  void,
+  number,
   { equalKey: string; equalValue: string }
->("app/fetchNumberOfSearchItems", async function (props, { dispatch }) {
-  let count: number = await getSearchNumberOfItems("products/products", props.equalKey, props.equalValue);
+>("app/fetchNumberOfSearchItems", async (props) => {
+  let count: number = await getSearchNumberOfItems(
+    "products/products",
+    props.equalKey,
+    props.equalValue.toLowerCase()
+  );
 
-  dispatch(setSearchNumberOfProducts(count));
+  return count;
 });
 
 const appSlice = createSlice({
   name: "app",
   initialState,
-  reducers: {
-    setCategories(state, action: PayloadAction<CategoryType[]>) {
-      state.categories = action.payload;
-    },
-    setBanners(state, action: PayloadAction<BannerType[]>) {
-      state.banners = action.payload;
-    },
-    setProducts(state, action: PayloadAction<ProductType[]>) {
-      state.products.products = action.payload;
-    },
-    setCurrentProduct(state, action: PayloadAction<ProductType>) {
-      state.currentProduct = action.payload;
-    },
-    setNumberOfProducts(state, action: PayloadAction<number>) {
-      state.totalNumberOfItems = action.payload;
-    },
-    setCurrentCategory(state, action: PayloadAction<CategoryType>) {
-      state.currentCategory = action.payload;
-    },
-    setSearchProducts(state, action: PayloadAction<ProductType[]>) {
-      state.products.search.products = action.payload;
-    },
-    setSearchNumberOfProducts(state, action: PayloadAction<number>) {
-      state.products.search.totalNumberOfItems = action.payload;
-    },
-    setIsLoading(state, action: PayloadAction<boolean>) {
-      state.isLoading = action.payload;
-    },
+  reducers: { },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCollectionCategoriesData.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchCollectionCategoriesData.fulfilled, (state, action) => {
+        state.categories = action.payload;
+        state.isLoading = false;
+      })
+
+      .addCase(fetchCategoryData.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchCategoryData.fulfilled, (state, action) => {
+        state.currentCategory = action.payload;
+        state.isLoading = false;
+      })
+
+      .addCase(fetchCollectionProductsData.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchCollectionProductsData.fulfilled, (state, action) => {
+        state.products.products = action.payload;
+        state.isLoading = false;
+      })
+
+      .addCase(fetchProductData.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchProductData.fulfilled, (state, action) => {
+        state.currentProduct = action.payload;
+        state.isLoading = false;
+      })
+
+      .addCase(fetchNumberOfItems.pending, (state, action) => {
+       // state.isLoading = true;
+      })
+      .addCase(fetchNumberOfItems.fulfilled, (state, action) => {
+        state.totalNumberOfItems = action.payload;
+        //state.isLoading = false;
+      })
+
+      .addCase(fetchSearchItems.pending, (state, action) => {
+       // state.isLoading = true;
+      })
+      .addCase(fetchSearchItems.fulfilled, (state, action) => {
+        state.products.search.products = action.payload;
+        //state.isLoading = false;
+      })
+
+      .addCase(fetchNumberOfSearchItems.pending, (state, action) => {
+       // state.isLoading = true;
+      })
+      .addCase(fetchNumberOfSearchItems.fulfilled, (state, action) => {
+        state.products.search.totalNumberOfItems = action.payload;
+        //state.isLoading = false;
+      });
   },
 });
 
-const {
-  setCategories,
-  // setBanners,
-  setProducts,
-  setCurrentProduct,
-  setIsLoading,
-  setCurrentCategory,
-  setNumberOfProducts,
-  setSearchProducts,
-  setSearchNumberOfProducts,
-} = appSlice.actions;
 export default appSlice;
