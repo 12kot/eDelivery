@@ -256,7 +256,6 @@ export const handleBasketProduct = createAsyncThunk<
   return { type: "ADD", basketItem: props.basketItem };
 });
 
-//ДОРАБОТКИ НЕ ТРЕБУЮТСЯ
 export const handleAddress = createAsyncThunk<
   AddressType,
   AddressType,
