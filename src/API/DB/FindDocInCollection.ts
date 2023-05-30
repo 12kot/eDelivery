@@ -1,15 +1,15 @@
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
 
-const FindDoc = async <T>(
+const FindDocInCollection = async <T>(
   uid: string,
   collType: string,
   keyValue: string,
-  value: number
+  value: number | string
 ): Promise<T> => {
-  const citiesRef = collection(db, `users/${uid}/${collType}`);
+  const ref = collection(db, `users/${uid}/${collType}`);
 
-  const q = query(citiesRef, where(`${keyValue}`, "==", value));
+  const q = query(ref, where(`${keyValue}`, "==", value));
   const querySnapshot = await getDocs(q);
   
   const data: T[] = [];
@@ -21,4 +21,4 @@ const FindDoc = async <T>(
   return data[0];
 };
 
-export default FindDoc;
+export default FindDocInCollection;

@@ -1,6 +1,6 @@
 import ProductItem from "components/main/products/productItem/ProductItem";
 import { useAppDispatch, useAppSelector } from "hooks/hooks";
-import React, { ReactElement, useEffect } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { fetchUserBasket } from "store/slices/userSlice";
 import { ProductType } from "types/types";
 import { v4 } from "uuid";
@@ -8,6 +8,7 @@ import styles from "./Basket.module.css";
 import Loader from "ui/loader/Loader";
 import Address from "components/profile/profile/adresses/address/Address";
 import { NavLink } from "react-router-dom";
+import ModalChooseAddress from "./chooseAddress/ModalChooseAddress";
 
 const Basket = (): ReactElement => {
   const dispatch = useAppDispatch();
@@ -15,7 +16,11 @@ const Basket = (): ReactElement => {
     (state) => state.user.currentUser.basket.products
   );
   const items = useAppSelector((state) => state.user.currentUser.basket.items);
+  const address = useAppSelector(
+    (state) => state.user.currentUser.currentAddress
+  );
   const isLoading = useAppSelector((state) => state.user.isLoading);
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     dispatch(fetchUserBasket());
@@ -37,12 +42,16 @@ const Basket = (): ReactElement => {
     return n;
   };
 
+  const handleChooseAddress = (): void => {
+    setIsActive(true);
+  }
+
   const handleCreateOrder = (): void => {};
 
   return (
     <>
       {isLoading ? <Loader /> : <></>}
-      
+
       {products.length === 0 ? (
         <div className={styles.basketIsNull}>
           <h2>Козина пуста</h2>
@@ -63,20 +72,15 @@ const Basket = (): ReactElement => {
           >
             <div className={styles.order_approve_content}>
               <h3>Подтверждение заказа</h3>
-              <span>
+              <span onClick={handleChooseAddress}>
                 <p>Адрес доставки:</p>
-                <Address
-                  address={{
-                    city: "Гродно",
-                    street: "БЛК",
-                    houseNumber: "3",
-                    block: "1",
-                    entrance: "1",
-                    floor: "1",
-                    flat: "2",
-                    id: "1"
-                  }}
-                />
+                {address.id ? (
+                  <Address address={address} />
+                ) : (
+                  <p className={styles.address}>
+                    Адрес не выбран. Нажмите, чтобы выбрать адрес
+                  </p>
+                )}
               </span>
               <span>
                 <p className={styles.price}>
@@ -88,6 +92,7 @@ const Basket = (): ReactElement => {
               </button>
             </div>
           </div>
+          <ModalChooseAddress isActive={isActive} setIsActive={setIsActive} />
         </div>
       )}
     </>

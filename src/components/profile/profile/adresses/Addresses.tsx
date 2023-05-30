@@ -3,7 +3,7 @@ import styles from "./Addreses.module.css";
 import Address from "./address/Address";
 import { v4 } from "uuid";
 import { useAppSelector } from "hooks/hooks";
-import AddAddressModal from "./addressModal/AddressModal";
+import AddressModal from "./addressModal/AddressModal";
 import Loader from "ui/loader/Loader";
 
 const Addresses = (): ReactElement => {
@@ -28,7 +28,7 @@ const Addresses = (): ReactElement => {
       >
         Добавить новый адрес
       </button>
-      <AddAddressModal isActive={isActive} setIsActive={ setIsActive } />
+      <AddressModal isActive={isActive} header={"Добавить новый адрес"} setIsActive={ setIsActive } />
     </div>
   );
 };

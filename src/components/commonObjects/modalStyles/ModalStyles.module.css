@@ -71,7 +71,6 @@
 
 .buttons button {
   margin: auto 0 -24px;
-  outline: 0;
   border: none;
   height: 55px;
   color: #fff;
@@ -97,7 +96,6 @@
 .addAddress:hover {
   background-color: #01ae6f;
 }
-
 
 @media screen and (max-width: 960px) {
   .modal {

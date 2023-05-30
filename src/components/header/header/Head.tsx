@@ -8,17 +8,16 @@ import SeachModal from "./modal/SearchModal";
 
 const Head = (): ReactElement => {
   const [searchValue, setSearchValue] = useState("");
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchSearchItems({ equalKey: "name", equalValue: searchValue, count: 15 }));
     
     if (searchValue) setIsActive(true);
     else setIsActive(false);
-   }, [searchValue]);
-
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+   }, [searchValue, dispatch]);
 
   const handleSearchInput = (e: string) => {
     setSearchValue(e);

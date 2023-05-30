@@ -1,7 +1,7 @@
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
 
-const GetCol = async <T>(email: string, colType: string): Promise<T[]> => {
+const GetCollection = async <T>(email: string, colType: string): Promise<T[]> => {
   const querySnapshot = await getDocs(
     collection(db, `users/${email}/${colType}`)
   );
@@ -14,4 +14,4 @@ const GetCol = async <T>(email: string, colType: string): Promise<T[]> => {
   return data;
 };
 
-export default GetCol;
+export default GetCollection;

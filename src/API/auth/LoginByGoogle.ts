@@ -1,13 +1,10 @@
 import { AuthUser } from "types/types";
 import { auth, provider } from "../../firebase";
 import { signInWithPopup } from "firebase/auth";
+import { emptyAuthUser } from "./emptyAuthUser";
 
 const LoginByGoogle = async (): Promise<AuthUser> => {
-  let user: AuthUser = {
-    email: "",
-    uid: "",
-    token: "",
-  };
+  let user: AuthUser = emptyAuthUser;
 
   await signInWithPopup(auth, provider)
     .then(async (response) => {

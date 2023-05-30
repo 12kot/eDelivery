@@ -36,6 +36,7 @@ export type AuthUser = {
   email: string;
   uid: string;
   token: string;
+  currentAddress: AddressType;
 };
 
 export type CurrentUser = {

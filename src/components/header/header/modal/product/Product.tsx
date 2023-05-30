@@ -3,7 +3,7 @@ import { ProductType } from "types/types";
 import styles from "./Product.module.css";
 import { useNavigate } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
-import ProductActionsButtons from "components/productActionsButtons/ProductActionsButtons";
+import ProductActionsButtons from "components/commonObjects/productActionsButtons/ProductActionsButtons";
 
 type Props = {
   product: ProductType;

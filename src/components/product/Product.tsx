@@ -9,7 +9,7 @@ import {
 import Loader from "ui/loader/Loader";
 import ProductsSwiper from "components/main/products/ProductsSwiper";
 import { handleFavoriteProduct } from "store/slices/userSlice";
-import ProductActionsButtons from "components/productActionsButtons/ProductActionsButtons";
+import ProductActionsButtons from "components/commonObjects/productActionsButtons/ProductActionsButtons";
 import Heart from "ui/Heart";
 
 const Product = (): ReactElement => {

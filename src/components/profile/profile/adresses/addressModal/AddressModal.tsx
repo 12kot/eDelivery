@@ -1,35 +1,67 @@
 import React, { Dispatch, ReactElement, SetStateAction, useState } from "react";
-import styles from "./AddressModal.module.css";
+import styles from "components/commonObjects/modalStyles/ModalStyles.module.css";
 import Input from "ui/input/Input";
 import { useAppDispatch } from "hooks/hooks";
 import { handleAddress } from "store/slices/userSlice";
+import { AddressType } from "types/types";
 
 type Props = {
   isActive: boolean;
   setIsActive: Dispatch<SetStateAction<boolean>>;
+  header: string;
+  address?: AddressType;
 };
 
-const AddAddressModal = (props: Props): ReactElement => {
-  const [city, setCity] = useState("");
-  const [street, setStreet] = useState("");
-  const [houseNumber, setHouseNumber] = useState("");
-  const [block, setBlock] = useState("");
-  const [entrance, setEntrance] = useState("");
-  const [floor, setFloor] = useState("");
-  const [flat, setFlat] = useState("");
+const AddressModal = (props: Props): ReactElement => {
+  const address: AddressType = props.address
+    ? props.address
+    : {
+        city: "",
+        street: "",
+        houseNumber: "",
+        block: "",
+        entrance: "",
+        floor: "",
+        flat: "",
+        id: "",
+    };
+  
+  const [city, setCity] = useState(address.city);
+  const [street, setStreet] = useState(address.street);
+  const [houseNumber, setHouseNumber] = useState(address.houseNumber);
+  const [block, setBlock] = useState(address.block);
+  const [entrance, setEntrance] = useState(address.entrance);
+  const [floor, setFloor] = useState(address.floor);
+  const [flat, setFlat] = useState(address.flat);
 
   const dispatch = useAppDispatch();
 
-  const handleAddAddress = (): void => {
-    if (!city || !street || !houseNumber) {
-      alert("Введены не все данные");
-      return;
-    }
+  const _clearAddress = () => {
+    setCity("");
+    setStreet("");
+    setHouseNumber("");
+    setBlock("");
+    setEntrance("");
+    setFloor("");
+    setFlat("");
+  };
 
+  const handleAddAddress = (): void => {
     props.setIsActive(false);
     dispatch(
-      handleAddress({city, street, houseNumber, block, entrance, floor, flat, id: ""})
-      );
+      handleAddress({
+        city,
+        street,
+        houseNumber,
+        block,
+        entrance,
+        floor,
+        flat,
+        id: address.id,
+      })
+    );
+
+    _clearAddress();
   };
 
   return (
@@ -43,7 +75,7 @@ const AddAddressModal = (props: Props): ReactElement => {
     >
       <div className={styles.container} onClick={(e) => e.stopPropagation()}>
         <div className={styles.content}>
-          <h3>Добавить новый адрес</h3>
+          <h3>{props.header}</h3>
           <div className={styles.items}>
             <span className={styles.item}>
               <Input
@@ -129,4 +161,4 @@ const AddAddressModal = (props: Props): ReactElement => {
   );
 };
 
-export default AddAddressModal;
+export default AddressModal;

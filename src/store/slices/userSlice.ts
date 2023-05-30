@@ -1,8 +1,8 @@
 import DeleteDoc from "API/DB/DeleteDoc";
 import { RootState } from "./../index";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import FindDoc from "API/DB/FindDoc";
-import GetCol from "API/DB/GetCol";
+import FindDocInCollection from "API/DB/FindDocInCollection";
+import GetCollection from "API/DB/GetCollection";
 import SetDoc from "API/DB/SetDoc";
 import CreateWithEmailAndPassword from "API/auth/CreateWithEmail";
 import LoginByEmail from "API/auth/LoginByEmail";
@@ -19,10 +19,23 @@ import CreateUser from "API/DB/CreateUser";
 import getItemsDB from "API/realtimeDB/getItemsDB";
 import UpdateBasketDoc from "API/DB/UpdateBasketDoc";
 import { v4 } from "uuid";
+import UpdateProfileInfo from "API/DB/UpdateProfileInfo";
+import GetUserData from "API/DB/GetUserData";
 
 type UserSlice = {
   currentUser: CurrentUser;
   isLoading: boolean;
+};
+
+const emptyAddress = {
+  city: "",
+  street: "",
+  houseNumber: "",
+  block: "",
+  entrance: "",
+  floor: "",
+  flat: "",
+  id: "",
 };
 
 const initialState: UserSlice = {
@@ -31,16 +44,7 @@ const initialState: UserSlice = {
     uid: "",
     token: "",
     addresses: [],
-    currentAddress: {
-      city: "",
-      street: "",
-      houseNumber: "",
-      block: "",
-      entrance: "",
-      floor: "",
-      flat: "",
-      id: "",
-    },
+    currentAddress: emptyAddress,
     basket: {
       products: [],
       items: [],
@@ -77,7 +81,7 @@ export const fetchUserFavorite = createAsyncThunk<
 >("user/fetchUserFavorite", async (_, { getState }) => {
   const userUID = getState().user.currentUser.uid;
 
-  const items: { id: number }[] = await GetCol(userUID, "favorite");
+  const items: { id: number }[] = await GetCollection(userUID, "favorite");
   const products: ProductType[] = await _getItems(items.map((item) => item.id));
 
   return {
@@ -91,7 +95,7 @@ export const fetchUserAddresses = createAsyncThunk<
   undefined,
   { state: RootState }
 >("user/fetchUserAddresses", async (_, { getState }) => {
-  const addresses: AddressType[] = await GetCol(
+  const addresses: AddressType[] = await GetCollection(
     getState().user.currentUser.uid,
     "addresses"
   );
@@ -106,27 +110,29 @@ export const fetchUserBasket = createAsyncThunk<
 >("user/fetchUserBasket", async (_, { getState }) => {
   const userUID = getState().user.currentUser.uid;
 
-  const items: BasketItemType[] = await GetCol(userUID, "basket");
+  const items: BasketItemType[] = await GetCollection(userUID, "basket");
   const products: ProductType[] = await _getItems(items.map((item) => item.id));
 
   return { items: items, products: products };
 });
 
 export const fetchUserData = createAsyncThunk<
-  void,
+  AuthUser,
   AuthUser,
   { state: RootState }
->("user/fetchUserData", async function (props, { getState, dispatch }) {
-  //можно проверку на юзера сделать
-  dispatch(setUser(props));
+>("user/fetchUserData", async function (props, { dispatch, rejectWithValue }) {
+  const user: AuthUser | undefined = await GetUserData(props.uid);
+  if (!user?.uid) return rejectWithValue("Пользователь не найден");
 
   dispatch(fetchUserFavorite());
   dispatch(fetchUserBasket());
   dispatch(fetchUserAddresses());
+
+  return user as AuthUser;
 });
 
 export const loginUserByGoogle = createAsyncThunk<
-  AuthUser,
+  undefined,
   undefined,
   { state: RootState }
 >("user/loginUserByGoogle", async (_, { dispatch, rejectWithValue }) => {
@@ -134,28 +140,28 @@ export const loginUserByGoogle = createAsyncThunk<
   if (data.email) {
     await CreateUser(data);
     dispatch(fetchUserData(data));
-    return data;
+    return;
   }
 
   return rejectWithValue("Error");
 });
 
 export const loginUserByEmail = createAsyncThunk<
-  AuthUser,
+  undefined,
   { email: string; password: string },
   { state: RootState }
 >("user/loginUserByEmail", async (props, { dispatch, rejectWithValue }) => {
   let data: AuthUser = await LoginByEmail(props.email, props.password);
   if (data.email) {
     dispatch(fetchUserData(data));
-    return data;
+    return;
   }
 
   return rejectWithValue("Error");
 });
 
 export const createUserWithEmail = createAsyncThunk<
-  AuthUser,
+  undefined,
   { email: string; password: string; repeatPassword: string },
   { state: RootState }
 >("user/createUserWithEmail", async (props, { dispatch, rejectWithValue }) => {
@@ -168,7 +174,7 @@ export const createUserWithEmail = createAsyncThunk<
   if (data.email) {
     await CreateUser(data);
     dispatch(fetchUserData(data));
-    return data;
+    return;
   }
 
   return rejectWithValue("Error");
@@ -187,7 +193,7 @@ export const handleFavoriteProduct = createAsyncThunk<
   { state: RootState }
 >("user/handleFavoriteProduct", async (props, { getState }) => {
   const userUID = getState().user.currentUser.uid;
-  const isExists: ProductType = await FindDoc(
+  const isExists: ProductType = await FindDocInCollection(
     userUID,
     "favorite",
     "id",
@@ -195,7 +201,7 @@ export const handleFavoriteProduct = createAsyncThunk<
   );
 
   if (!!isExists) {
-    await DeleteDoc(userUID, "favorite", props.productID);
+    await DeleteDoc(userUID, "favorite", props.productID.toString());
     return { type: "DELETE", id: props.productID };
   } else {
     await SetDoc(userUID, "favorite", props.productID.toString(), {
@@ -226,7 +232,7 @@ export const handleBasketProduct = createAsyncThunk<
   }
 
   const userUID = getState().user.currentUser.uid;
-  const isExists: ProductType = await FindDoc(
+  const isExists: ProductType = await FindDocInCollection(
     userUID,
     "basket",
     "id",
@@ -235,7 +241,7 @@ export const handleBasketProduct = createAsyncThunk<
 
   if (!!isExists) {
     if (props.basketItem.count === 0) {
-      await DeleteDoc(userUID, "basket", props.basketItem.id);
+      await DeleteDoc(userUID, "basket", props.basketItem.id.toString());
       return { type: "REMOVE", basketItem: props.basketItem };
     }
 
@@ -255,11 +261,44 @@ export const handleAddress = createAsyncThunk<
   AddressType,
   AddressType,
   { state: RootState }
->("user/handleAddress", async (props, { getState }) => {
-  const userUID = getState().user.currentUser.uid;
+>(
+  "user/handleAddress",
+  async (props, { getState, rejectWithValue, dispatch }) => {
+    if (!props.city || !props.street || !props.houseNumber) {
+      return rejectWithValue("Введены не все данные");
+    }
 
-  if (!props.id) props.id = v4();
-  await SetDoc(userUID, "addresses", props.id, props);
+    const userUID = getState().user.currentUser.uid;
+    if (!props.id) props.id = v4();
+    await SetDoc(userUID, "addresses", props.id, props);
+
+    dispatch(setCurrentAddress(props));
+
+    return props;
+  }
+);
+
+export const deleteAddress = createAsyncThunk<
+  string,
+  { id: string },
+  { state: RootState }
+>("user/deleteAddress", async (props, { dispatch, getState }) => {
+  const userUID = getState().user.currentUser.uid;
+  await DeleteDoc(userUID, "addresses", props.id);
+
+  if (getState().user.currentUser.currentAddress.id === props.id)
+    dispatch(setCurrentAddress(emptyAddress));
+
+  return props.id;
+});
+
+export const setCurrentAddress = createAsyncThunk<
+  AddressType,
+  AddressType,
+  { state: RootState }
+>("user/setCurrentAddress", async (props, { getState }) => {
+  const userUID = getState().user.currentUser.uid;
+  await UpdateProfileInfo(userUID, { currentAddress: props });
 
   return props;
 });
@@ -267,15 +306,22 @@ export const handleAddress = createAsyncThunk<
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {
-    setUser(state, action) {
-      state.currentUser.email = action.payload.email;
-      state.currentUser.uid = action.payload.uid;
-      state.currentUser.token = action.payload.token;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(fetchUserData.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchUserData.fulfilled, (state, action) => {
+        state.currentUser = { ...state.currentUser, ...action.payload };
+        state.isLoading = false;
+      })
+      .addCase(fetchUserData.rejected, (state, action) => {
+        state.currentUser = initialState.currentUser;
+        localStorage.clear();
+        state.isLoading = false;
+      })
+
       .addCase(fetchUserFavorite.pending, (state, action) => {
         state.isLoading = true;
       })
@@ -391,16 +437,39 @@ const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(handleAddress.fulfilled, (state, action) => {
-        if (true) {
-          //если адреса нет в базе, то добавляем. Проверяем по ID в цикле for, сразу редактируя, если надо
-          state.currentUser.addresses.push(action.payload);
-          state.currentUser.currentAddress = action.payload;
-        }
+        const index = state.currentUser.addresses.findIndex(
+          (address) => address.id === action.payload.id
+        );
 
+        if (index === -1) {
+          state.currentUser.addresses.push(action.payload);
+        } else state.currentUser.addresses[index] = action.payload;
+
+        state.isLoading = false;
+      })
+      .addCase(handleAddress.rejected, (state, action) => {
+        state.isLoading = false;
+      })
+
+      .addCase(deleteAddress.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteAddress.fulfilled, (state, action) => {
+        state.currentUser.addresses = state.currentUser.addresses.filter(
+          (address) => address.id !== action.payload
+        );
+
+        state.isLoading = false;
+      })
+
+      .addCase(setCurrentAddress.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(setCurrentAddress.fulfilled, (state, action) => {
+        state.currentUser.currentAddress = action.payload;
         state.isLoading = false;
       });
   },
 });
 
-const { setUser } = userSlice.actions;
 export default userSlice;

@@ -7,13 +7,9 @@ const UpdateBasketDoc = async (
   collType: string,
   item: BasketItemType
 ) => {
-  const washingtonRef = doc(
-    db,
-    `users/${uid}/${collType}`,
-    item.id.toString()
-  );
+  const ref = doc(db, `users/${uid}/${collType}`, item.id.toString());
 
-  await updateDoc(washingtonRef, {
+  await updateDoc(ref, {
     count: item.count,
   });
 };

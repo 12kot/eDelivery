@@ -1,16 +1,13 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 import { AuthUser } from "types/types";
+import { emptyAuthUser } from "./emptyAuthUser";
 
 const CreateWithEmailAndPassword = async (
   email: string,
   password: string
 ): Promise<AuthUser> => {
-  const user: AuthUser = {
-    email: "",
-    uid: "",
-    token: "",
-  };
+  const user: AuthUser = emptyAuthUser;
 
   await createUserWithEmailAndPassword(auth, email, password)
     .then(async (response) => {
