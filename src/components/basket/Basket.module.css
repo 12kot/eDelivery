@@ -112,6 +112,11 @@
   border: 1px solid #d8d8d8;
 }
 
+.sale {
+  color: #9f9f9f;
+  margin: 0 0 6px;
+}
+
 @media screen and (max-width: 960px) {
   .container {
     margin: 24px 0 0;

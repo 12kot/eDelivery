@@ -12,15 +12,19 @@ import {
   AddressType,
   AuthUser,
   BasketItemType,
+  BasketType,
   CurrentUser,
+  OrderProductType,
+  OrderType,
   ProductType,
 } from "types/types";
 import CreateUser from "API/DB/CreateUser";
 import getItemsDB from "API/realtimeDB/getItemsDB";
-import UpdateBasketDoc from "API/DB/UpdateBasketDoc";
+import UpdateDoc from "API/DB/UpdateDoc";
 import { v4 } from "uuid";
 import UpdateProfileInfo from "API/DB/UpdateProfileInfo";
 import GetUserData from "API/DB/GetUserData";
+import editItem from "API/realtimeDB/editItem";
 
 type UserSlice = {
   currentUser: CurrentUser;
@@ -53,6 +57,7 @@ const initialState: UserSlice = {
       products: [],
       items: [],
     },
+    history: [],
   },
   isLoading: false,
 };
@@ -116,6 +121,18 @@ export const fetchUserBasket = createAsyncThunk<
   return { items: items, products: products };
 });
 
+export const fetchUserHistory = createAsyncThunk<
+  { history: OrderType[] },
+  undefined,
+  { state: RootState }
+>("user/fetchUserHistory", async (_, { getState }) => {
+  const userUID = getState().user.currentUser.uid;
+
+  const history: OrderType[] = await GetCollection(userUID, "history");
+
+  return { history };
+});
+
 export const fetchUserData = createAsyncThunk<
   AuthUser,
   AuthUser,
@@ -127,6 +144,7 @@ export const fetchUserData = createAsyncThunk<
   dispatch(fetchUserFavorite());
   dispatch(fetchUserBasket());
   dispatch(fetchUserAddresses());
+  dispatch(fetchUserHistory());
 
   return user as AuthUser;
 });
@@ -213,7 +231,7 @@ export const handleFavoriteProduct = createAsyncThunk<
 
 export const handleBasketProduct = createAsyncThunk<
   { type: string; basketItem: BasketItemType },
-  { basketItem: BasketItemType },
+  { basketItem: BasketItemType; type: string },
   { state: RootState }
 >("user/handleBasketProduct", async (props, { getState, rejectWithValue }) => {
   const product: ProductType[] = await getItemsDB(
@@ -227,9 +245,13 @@ export const handleBasketProduct = createAsyncThunk<
     return rejectWithValue("Error");
   }
 
-  if (product[0].quantity < props.basketItem.count) {
+  if (product[0].quantity <= 0 && props.type === "PLUS") {
     return rejectWithValue("Error");
   }
+
+  if (props.type === "PLUS") product[0].quantity = --product[0].quantity;
+  else product[0].quantity = ++product[0].quantity;
+  await editItem(product[0].id, { quantity: product[0].quantity });
 
   const userUID = getState().user.currentUser.uid;
   const isExists: ProductType = await FindDocInCollection(
@@ -245,7 +267,10 @@ export const handleBasketProduct = createAsyncThunk<
       return { type: "REMOVE", basketItem: props.basketItem };
     }
 
-    await UpdateBasketDoc(userUID, "basket", props.basketItem);
+    await UpdateDoc(userUID, "basket", props.basketItem.id.toString(), {
+      count: props.basketItem.count,
+    });
+
     return { type: "SET_COUNT", basketItem: props.basketItem };
   }
 
@@ -302,6 +327,81 @@ export const setCurrentAddress = createAsyncThunk<
   return props;
 });
 
+export const createOrder = createAsyncThunk<
+  OrderType,
+  { price: number },
+  { state: RootState }
+>("user/createOrder", async (props, { getState, dispatch }) => {
+  const userUID = getState().user.currentUser.uid;
+  dispatch(fetchUserBasket());
+  dispatch(fetchUserHistory());
+
+  const order: OrderType = {
+    id: getState().user.currentUser.history.length + 1,
+    price: props.price,
+    date: new Date().toDateString(),
+    products: _getOrderProducts(getState().user.currentUser.basket),
+    address: getState().user.currentUser.currentAddress,
+    status: "WAITING",
+  };
+
+  await SetDoc(userUID, "history", order.id.toString(), order);
+  for (const item of getState().user.currentUser.basket.items)
+    await DeleteDoc(userUID, "basket", item.id.toString());
+
+  return order;
+});
+
+export const handleOrderStatus = createAsyncThunk<
+  { id: number; status: string },
+  { id: number; status: string },
+  { state: RootState }
+>("user/handleOrderStatus", async (props, { getState }) => {
+  const userUID = getState().user.currentUser.uid;
+
+  if (props.status === "CANCELED") {
+    const order: OrderType = await FindDocInCollection(
+      userUID,
+      "history",
+      "id",
+      props.id
+    );
+
+    for (const product of order.products) {
+      let data: ProductType[] = await getItemsDB(
+        "products/products",
+        "id",
+        product.id,
+        1
+        );
+
+      await editItem(product.id, { quantity: data[0].quantity + 1 * product.count });
+    }
+  }
+
+  await UpdateDoc(userUID, "history", props.id.toString(), {
+    status: props.status,
+  });
+
+  return props;
+});
+
+const _getOrderProducts = (basket: BasketType): OrderProductType[] => {
+  const products: OrderProductType[] = basket.products.map((product) => {
+    const itemIndex = basket.items.findIndex((item) => item.id === product.id);
+
+    return {
+      imageURL: product.imageURL,
+      name: product.name,
+      price: product.price,
+      count: basket.items[itemIndex].count,
+      id: product.id,
+    };
+  });
+
+  return products;
+};
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -321,28 +421,21 @@ const userSlice = createSlice({
         state.isLoading = false;
       })
 
-      .addCase(fetchUserFavorite.pending, (state, action) => {
-        state.isLoading = true;
-      })
       .addCase(fetchUserFavorite.fulfilled, (state, action) => {
         state.currentUser.favorite = action.payload;
-        state.isLoading = false;
       })
 
-      .addCase(fetchUserAddresses.pending, (state, action) => {
-        state.isLoading = true;
-      })
       .addCase(fetchUserAddresses.fulfilled, (state, action) => {
         state.currentUser.addresses = action.payload;
-        state.isLoading = false;
       })
 
-      .addCase(fetchUserBasket.pending, (state, action) => {
-        state.isLoading = true;
-      })
+      .addCase(fetchUserBasket.pending, (state, action) => {})
       .addCase(fetchUserBasket.fulfilled, (state, action) => {
         state.currentUser.basket = action.payload;
-        state.isLoading = false;
+      })
+
+      .addCase(fetchUserHistory.fulfilled, (state, action) => {
+        state.currentUser.history = action.payload.history;
       })
 
       .addCase(loginUserByGoogle.pending, (state, action) => {
@@ -461,11 +554,29 @@ const userSlice = createSlice({
         state.isLoading = false;
       })
 
-      .addCase(setCurrentAddress.pending, (state, action) => {
-        state.isLoading = true;
-      })
       .addCase(setCurrentAddress.fulfilled, (state, action) => {
         state.currentUser.currentAddress = action.payload;
+        state.isLoading = false;
+      })
+
+      .addCase(createOrder.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(createOrder.fulfilled, (state, action) => {
+        state.currentUser.basket = initialState.currentUser.basket;
+        state.currentUser.history.push(action.payload);
+        state.isLoading = false;
+      })
+
+      .addCase(handleOrderStatus.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(handleOrderStatus.fulfilled, (state, action) => {
+        state.currentUser.history.forEach((order) => {
+          if (order.id === action.payload.id)
+            order.status = action.payload.status;
+        });
+
         state.isLoading = false;
       });
   },

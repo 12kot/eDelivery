@@ -47,22 +47,23 @@ export type CurrentUser = {
   basket: BasketType;
   favorite: FavoriteType;
   currentAddress: AddressType;
+  history: OrderType[];
 };
 
 export type FavoriteType = {
-  products: ProductType[]
+  products: ProductType[];
   items: number[];
-}
+};
 
 export type BasketType = {
   products: ProductType[];
   items: BasketItemType[];
-}
+};
 
 export type BasketItemType = {
   id: number;
   count: number;
-}
+};
 
 export type AddressType = {
   city: string;
@@ -74,3 +75,20 @@ export type AddressType = {
   flat: string;
   id: string;
 };
+
+export type OrderType = {
+  id: number;
+  price: number;
+  date: string;
+  products: OrderProductType[];
+  address: AddressType;
+  status: string;
+};
+
+export type OrderProductType = { 
+  imageURL: string;
+  name: string;
+  price: number;
+  count: number;
+  id: number;
+}

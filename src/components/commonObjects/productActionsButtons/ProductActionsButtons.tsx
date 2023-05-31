@@ -19,20 +19,24 @@ const ProductActionsButtons = (props: Props): ReactElement => {
   const isLoggedIn: boolean = !!useAppSelector(
     (state) => state.user.currentUser.email
   );
-  const favoriteItems = useAppSelector((state) => state.user.currentUser.favorite.items);
-  const basketItems = useAppSelector((state) => state.user.currentUser.basket.items);
+  const favoriteItems = useAppSelector(
+    (state) => state.user.currentUser.favorite.items
+  );
+  const basketItems = useAppSelector(
+    (state) => state.user.currentUser.basket.items
+  );
   const isLoading = useAppSelector((state) => state.user.isLoading);
   let count = 0;
 
   const isFavorite = (): boolean => {
-    for (let item of favoriteItems)
-      if (item === props.product.id) return true;
+    for (let item of favoriteItems) if (item === props.product.id) return true;
 
     return false;
   };
 
   const handleFavorite = (): void => {
-    if (isLoggedIn) dispatch(handleFavoriteProduct({ productID: props.product.id }));
+    if (isLoggedIn)
+      dispatch(handleFavoriteProduct({ productID: props.product.id }));
     else navigate("/login");
   };
 
@@ -51,6 +55,7 @@ const ProductActionsButtons = (props: Props): ReactElement => {
       dispatch(
         handleBasketProduct({
           basketItem: { id: props.product.id, count: ++count },
+          type: "PLUS",
         })
       );
     else navigate("/login");
@@ -61,6 +66,7 @@ const ProductActionsButtons = (props: Props): ReactElement => {
       dispatch(
         handleBasketProduct({
           basketItem: { id: props.product.id, count: --count },
+          type: "MINUS",
         })
       );
     else navigate("/login");
@@ -84,13 +90,15 @@ const ProductActionsButtons = (props: Props): ReactElement => {
             +
           </button>
         </span>
-      ) : (
+      ) : props.product.quantity !== 0 ? (
         <button
           className={`${styles.button} ${styles.inBasket}`}
           onClick={handleAddProduct}
         >
           +
         </button>
+      ) : (
+        <button className={`${styles.button} ${styles.absent}`}>Няма</button>
       )}
       {props.favorite ? (
         <button

@@ -49,6 +49,7 @@
 
 .actions button img {
   max-height: 20px;
+  cursor: pointer;
 }
 
 .actions button:hover {

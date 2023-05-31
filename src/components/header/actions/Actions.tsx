@@ -6,6 +6,7 @@ import homeIcon from "images/icons/home.png";
 import userIcon from "images/icons/user.png";
 import heartIcon from "images/icons/heart.png";
 import basketIcon from "images/icons/basket.png";
+import historyIcon from "images/icons/history.png";
 import { useAppSelector } from "hooks/hooks";
 
 type Props = {
@@ -38,7 +39,7 @@ const Actions = (props: Props): ReactElement => {
           <p>Корзина</p>
       </NavLink>
       <NavLink to="/profile/history" className={`${styles.action}`}>
-          <img src={basketIcon} alt="history" />
+          <img src={historyIcon} alt="history" />
           <p>История</p>
       </NavLink>
     </nav>

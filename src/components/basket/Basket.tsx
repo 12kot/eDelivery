@@ -1,8 +1,12 @@
 import ProductItem from "components/main/products/productItem/ProductItem";
 import { useAppDispatch, useAppSelector } from "hooks/hooks";
 import React, { ReactElement, useEffect, useState } from "react";
-import { fetchUserBasket } from "store/slices/userSlice";
-import { ProductType } from "types/types";
+import {
+  createOrder,
+  fetchUserBasket,
+  fetchUserHistory,
+} from "store/slices/userSlice";
+import { OrderType, ProductType } from "types/types";
 import { v4 } from "uuid";
 import styles from "./Basket.module.css";
 import Loader from "ui/loader/Loader";
@@ -12,8 +16,11 @@ import ModalChooseAddress from "./chooseAddress/ModalChooseAddress";
 
 const Basket = (): ReactElement => {
   const dispatch = useAppDispatch();
-  const products = useAppSelector(
+  const products: ProductType[] = useAppSelector(
     (state) => state.user.currentUser.basket.products
+  );
+  const history: OrderType[] = useAppSelector(
+    (state) => state.user.currentUser.history
   );
   const items = useAppSelector((state) => state.user.currentUser.basket.items);
   const address = useAppSelector(
@@ -24,6 +31,7 @@ const Basket = (): ReactElement => {
 
   useEffect(() => {
     dispatch(fetchUserBasket());
+    dispatch(fetchUserHistory());
   }, [dispatch]);
 
   const getProducts = (): ReactElement[] => {
@@ -39,14 +47,18 @@ const Basket = (): ReactElement => {
       n += product.price * count[0].count;
     });
 
-    return n;
+    if (history.length === 0) n = (n * 95) / 100;
+
+    return +n.toFixed(2);
   };
 
   const handleChooseAddress = (): void => {
     setIsActive(true);
-  }
+  };
 
-  const handleCreateOrder = (): void => {};
+  const handleCreateOrder = (): void => {
+    dispatch(createOrder({ price: getPrice() }));
+  };
 
   return (
     <>
@@ -83,8 +95,9 @@ const Basket = (): ReactElement => {
                 )}
               </span>
               <span>
+                {history.length === 0 ? <p className={styles.sale}>Скидка: 5%</p> : <></>}
                 <p className={styles.price}>
-                  Общая стоимость: <strong>{getPrice().toFixed(2)}</strong>р.
+                  Общая стоимость: <strong>{getPrice()}</strong>р.
                 </p>
               </span>
               <button className={styles.button} onClick={handleCreateOrder}>

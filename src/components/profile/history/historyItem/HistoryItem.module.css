@@ -1,0 +1,62 @@
+.container {
+  box-sizing: border-box;
+
+  width: 100%;
+  border: 1px solid #d8d8d8;
+  border-radius: 6px;
+
+  padding: 12px 10px;
+
+  display: flex;
+  flex-direction: column;
+  row-gap: 6px;
+
+  font-size: 16px;
+}
+
+.header {
+  display: flex;
+}
+
+.date {
+  margin: 0 0 0 auto;
+  color: #9f9f9f;
+}
+
+.statusItems {
+  display: flex;
+  flex-direction: row;
+  column-gap: 6px;
+}
+
+.status {
+  border-radius: 6px;
+  width: fit-content;
+
+  padding: 6px 9px;
+  font-weight: 600;
+
+  color: #003b00;
+  background-color: #99ff99;
+  
+  border: none;
+  transition: 0.3s;
+}
+
+.cancelStatus {
+  color: #cc0033;
+  background-color: #ffcccc;
+}
+
+.status:hover {
+  background-color: #66FF66;
+}
+
+.cancelStatus:hover {
+  background-color: #ff9d9d;
+}
+
+.status:active {
+  transform: scale(0.96);
+}
+
