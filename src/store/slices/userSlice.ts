@@ -331,8 +331,12 @@ export const createOrder = createAsyncThunk<
   OrderType,
   { price: number },
   { state: RootState }
->("user/createOrder", async (props, { getState, dispatch }) => {
+>("user/createOrder", async (props, { getState, dispatch, rejectWithValue }) => {
   const userUID = getState().user.currentUser.uid;
+
+  if (!!!getState().user.currentUser.currentAddress.id)
+    return rejectWithValue("");
+
   dispatch(fetchUserBasket());
   dispatch(fetchUserHistory());
 
@@ -429,7 +433,7 @@ const userSlice = createSlice({
         state.currentUser.addresses = action.payload;
       })
 
-      .addCase(fetchUserBasket.pending, (state, action) => {})
+      .addCase(fetchUserBasket.pending, (state, action) => { })
       .addCase(fetchUserBasket.fulfilled, (state, action) => {
         state.currentUser.basket = action.payload;
       })
@@ -565,6 +569,9 @@ const userSlice = createSlice({
       .addCase(createOrder.fulfilled, (state, action) => {
         state.currentUser.basket = initialState.currentUser.basket;
         state.currentUser.history.push(action.payload);
+        state.isLoading = false;
+      })
+      .addCase(createOrder.rejected, (state, action) => {
         state.isLoading = false;
       })
 
