@@ -449,44 +449,28 @@ const userSlice = createSlice({
       })
       .addCase(fetchUserData.fulfilled, (state, action) => {
         state.currentUser = { ...state.currentUser, ...action.payload };
-        //state.isLoading = false;
+        state.isLoading = false;
       })
       .addCase(fetchUserData.rejected, (state, action) => {
         state.currentUser = initialState.currentUser;
         localStorage.clear();
-        //state.isLoading = false;
+        state.isLoading = false;
       })
 
-      .addCase(fetchUserFavorite.pending, (state, action) => {
-        state.isLoading = true;
-      })
       .addCase(fetchUserFavorite.fulfilled, (state, action) => {
         state.currentUser.favorite = action.payload;
-        state.isLoading = false;
       })
 
-      .addCase(fetchUserAddresses.pending, (state, action) => {
-        state.isLoading = true;
-      })
       .addCase(fetchUserAddresses.fulfilled, (state, action) => {
         state.currentUser.addresses = action.payload;
-        state.isLoading = false;
       })
 
-      .addCase(fetchUserBasket.pending, (state, action) => {
-        state.isLoading = true;
-      })
       .addCase(fetchUserBasket.fulfilled, (state, action) => {
         state.currentUser.basket = action.payload;
-        state.isLoading = false;
       })
 
-      .addCase(fetchUserHistory.pending, (state, action) => {
-        state.isLoading = true;
-      })
       .addCase(fetchUserHistory.fulfilled, (state, action) => {
         state.currentUser.history = action.payload.history;
-        state.isLoading = false;
       })
 
       .addCase(loginUserByGoogle.pending, (state, action) => {
