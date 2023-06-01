@@ -15,7 +15,6 @@ const getSearchItems = async <T>(
   equalValue: string,
   count: number
 ): Promise<T[]> => {
-
   let data: T[] = [];
 
   const db = getDatabase();
@@ -27,17 +26,17 @@ const getSearchItems = async <T>(
     endAt(`${equalValue}\uf8ff`)
   );
 
-  await get(q)
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        data = snapshot.val();
-      } else {
-        console.log("No data available");
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  const snapshot = await get(q);
+  
+  try {
+    if (snapshot.exists()) {
+      data = snapshot.val();
+    } else {
+      console.log("No data available");
+    }
+  } catch (error) {
+    console.error(error);
+  }
 
   return data;
 };

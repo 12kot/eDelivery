@@ -1,0 +1,75 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 9px;
+}
+
+.date {
+  color: #9f9f9f;
+}
+
+.products {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  row-gap: 12px;
+}
+
+.statusItems {
+  display: flex;
+  flex-direction: row;
+  column-gap: 6px;
+}
+
+.status {
+  border-radius: 6px;
+  width: fit-content;
+
+  font-size: 15px;
+  padding: 9px 9px;
+  font-weight: 600;
+
+  color: #003b00;
+  background-color: #99ff99;
+
+  border: none;
+  transition: 0.3s;
+  flex-grow: 5;
+}
+
+.cancelStatus {
+  color: #cc0033;
+  background-color: #ffcccc;
+  flex-grow: 1;
+}
+
+.priceStatus {
+  color: #003333;
+  background-color: #ccffff;
+}
+
+.saleStatus {
+  color: #521052;
+  background-color: #ffd5ff;
+  flex-grow: 1;
+}
+
+.status:hover {
+  background-color: #66ff66;
+}
+
+.priceStatus:hover {
+  background-color: #99ffff;
+}
+
+.saleStatus:hover {
+  background-color: #ff99ff;
+}
+
+.cancelStatus:hover {
+  background-color: #ff9d9d;
+}
+
+.status:active {
+  transform: scale(0.96);
+}

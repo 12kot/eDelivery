@@ -6,7 +6,7 @@ const UpdateDoc = async (
   collType: string,
   itemID: string,
   data: any
-) => {
+): Promise<void> => {
   const ref = doc(db, `users/${uid}/${collType}`, itemID);
 
   await updateDoc(ref, data);

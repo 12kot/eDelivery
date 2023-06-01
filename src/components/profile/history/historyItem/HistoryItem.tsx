@@ -53,7 +53,7 @@ const HistoryItem = (props: Props): ReactElement => {
 
   return (
     <div className={styles.container}>
-      <NavLink to={`/history/${props.order.id}`} className={styles.header}>
+      <NavLink to={`/profile/history/${props.order.id}`} className={styles.header}>
         <strong>{`Заказ #${props.order.id}`}</strong>
         <p className={styles.date}>{`${props.order.date}`}</p>
       </NavLink>

@@ -9,17 +9,19 @@ const CreateWithEmailAndPassword = async (
 ): Promise<AuthUser> => {
   const user: AuthUser = emptyAuthUser;
 
-  await createUserWithEmailAndPassword(auth, email, password)
-    .then(async (response) => {
-      if (response.user.email) {
-        user.email = response.user.email;
-        user.uid = response.user.uid;
-        user.token = await response.user.getIdToken();
+  const response = await createUserWithEmailAndPassword(auth, email, password);
+  
+  try {
+    if (response.user.email) {
+      user.email = response.user.email;
+      user.uid = response.user.uid;
+      user.token = await response.user.getIdToken();
 
-        localStorage.setItem("user", JSON.stringify(user));
-      }
-    })
-    .catch((error) => {console.error(error)});
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+  } catch (error) {
+    console.error(error);
+  }
 
   return user;
 };

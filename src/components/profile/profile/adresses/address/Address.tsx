@@ -9,6 +9,7 @@ import { deleteAddress, setCurrentAddress } from "store/slices/userSlice";
 
 type Props = {
   address: AddressType;
+  isOrder?: boolean;
 };
 
 const Address = (props: Props): ReactElement => {
@@ -33,24 +34,31 @@ const Address = (props: Props): ReactElement => {
   return (
     <div
       className={
-        isCurrentAddress
+        props.isOrder
+          ? `${styles.isOrder} ${styles.container}`
+          : isCurrentAddress
           ? `${styles.currentAddress} ${styles.container}`
           : `${styles.container}`
       }
-      onClick={handleChooseAddress}
+      onClick={!props.isOrder ? handleChooseAddress : () => {}}
     >
       <p className={styles.description}>
         {`${props.address.city}, ${props.address.street}, д. ${props.address.houseNumber}`}{" "}
         {props.address.entrance ? `, п. ${props.address.entrance}` : ""}
       </p>
-      <span className={styles.actions} onClick={(e) => e.stopPropagation()}>
-        <button onClick={handleDelete}>
-          <img src={DeleteIcon} alt="delete"></img>
-        </button>
-        <button onClick={handleEdit}>
-          <img src={EditIcon} alt="edit"></img>
-        </button>
-      </span>
+
+      {!props.isOrder ? (
+        <span className={styles.actions} onClick={(e) => e.stopPropagation()}>
+          <button onClick={handleDelete}>
+            <img src={DeleteIcon} alt="delete"></img>
+          </button>
+          <button onClick={handleEdit}>
+            <img src={EditIcon} alt="edit"></img>
+          </button>
+        </span>
+      ) : (
+        <></>
+      )}
 
       <AddressModal
         isActive={isActive}

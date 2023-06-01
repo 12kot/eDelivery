@@ -16,7 +16,7 @@ const History = (): ReactElement => {
   }, [dispatch]);
 
   const getHistory = (): ReactElement[] => {
-    return history.map((order) => <HistoryItem order={order} key={v4()} />);
+    return history.slice().sort((a, b) => a.id - b.id).map((order) => <HistoryItem order={order} key={v4()} />);
   };
 
   return (

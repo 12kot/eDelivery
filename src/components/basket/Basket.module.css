@@ -98,9 +98,15 @@
   transform: scale(0.95);
 }
 
+.chooseAddress {
+  display: flex;
+  flex-direction: column;
+
+  row-gap: 12px;
+}
+
 .address {
-  margin: 16px 0 0;
-  padding: 12px;
+  padding: 12px 10px;
 
   cursor: pointer;
   display: flex;

@@ -5,7 +5,7 @@ import {
   query,
   orderByChild,
   startAt,
-  endAt
+  endAt,
 } from "firebase/database";
 
 const getSearchNumberOfItems = async (
@@ -13,7 +13,6 @@ const getSearchNumberOfItems = async (
   equalKey: string,
   equalValue: string
 ): Promise<number> => {
-
   let data: number = 0;
 
   const db = getDatabase();
@@ -24,17 +23,17 @@ const getSearchNumberOfItems = async (
     endAt(`${equalValue}\uf8ff`)
   );
 
-  await get(q)
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        data = snapshot.size;
-      } else {
-        console.log("No data available");
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  const snapshot = await get(q);
+  
+  try {
+    if (snapshot.exists()) {
+      data = snapshot.size;
+    } else {
+      console.log("No data available");
+    }
+  } catch (error) {
+    console.error(error);
+  }
 
   return data;
 };

@@ -48,6 +48,7 @@ export type CurrentUser = {
   favorite: FavoriteType;
   currentAddress: AddressType;
   history: OrderType[];
+  openedOrder: OrderType;
 };
 
 export type FavoriteType = {
@@ -82,7 +83,7 @@ export type OrderType = {
   date: string;
   products: OrderProductType[];
   address: AddressType;
-  status: string;
+  status: "ACCEPTED" | "CANCELED" | "WAITING";
 };
 
 export type OrderProductType = { 

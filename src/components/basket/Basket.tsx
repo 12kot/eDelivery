@@ -84,7 +84,7 @@ const Basket = (): ReactElement => {
           >
             <div className={styles.order_approve_content}>
               <h3>Подтверждение заказа</h3>
-              <span onClick={handleChooseAddress}>
+              <span onClick={handleChooseAddress} className={styles.chooseAddress}>
                 <p>Адрес доставки:</p>
                 {address.id ? (
                   <Address address={address} />
