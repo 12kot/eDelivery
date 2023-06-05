@@ -8,8 +8,7 @@ import { useAppDispatch, useAppSelector } from "hooks/hooks";
 import Line from "ui/line/Line";
 
 const ProfileContent = (): ReactElement => {
-  const user: CurrentUser = useAppSelector((state) => state.user.currentUser)
-
+  const user: CurrentUser = useAppSelector((state) => state.user.currentUser);
   const dispatch = useAppDispatch();
 
   const handleClick = () => {
@@ -22,7 +21,7 @@ const ProfileContent = (): ReactElement => {
       <span className={styles.uid}>
         <p>Ваш ID клиента: {user.uid}</p>
       </span>
-      <UserData user={user} />
+      <UserData email={user.email} userData={user.userData} />
       <Addresses />
 
       <span className={styles.line}>

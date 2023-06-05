@@ -24,8 +24,8 @@ const AddressModal = (props: Props): ReactElement => {
         floor: "",
         flat: "",
         id: "",
-    };
-  
+      };
+
   const [city, setCity] = useState(address.city);
   const [street, setStreet] = useState(address.street);
   const [houseNumber, setHouseNumber] = useState(address.houseNumber);
@@ -76,71 +76,63 @@ const AddressModal = (props: Props): ReactElement => {
       <div className={styles.container} onClick={(e) => e.stopPropagation()}>
         <div className={styles.content}>
           <h3>{props.header}</h3>
-          <div className={styles.items}>
-            <span className={styles.item}>
-              <Input
-                type="text"
-                name="Населённый пункт"
-                value={city}
-                onChange={setCity}
-                autocomplete="off"
-              />
-            </span>
-            <span className={styles.item}>
-              <Input
-                type="text"
-                name="Улица"
-                value={street}
-                onChange={setStreet}
-                autocomplete="off"
-              />
-            </span>
-            <span className={styles.item}>
-              <Input
-                type="text"
-                name="Дом"
-                value={houseNumber}
-                onChange={setHouseNumber}
-                autocomplete="off"
-              />
-            </span>
-            <span className={styles.item}>
-              <Input
-                type="text"
-                name="Корпус"
-                value={block}
-                onChange={setBlock}
-                autocomplete="off"
-              />
-            </span>
-            <span className={styles.item}>
-              <Input
-                type="text"
-                name="Подъезд"
-                value={entrance}
-                onChange={setEntrance}
-                autocomplete="off"
-              />
-            </span>
-            <span className={styles.item}>
-              <Input
-                type="text"
-                name="Этаж"
-                value={floor}
-                onChange={setFloor}
-                autocomplete="off"
-              />
-            </span>
-            <span className={styles.item}>
-              <Input
-                type="text"
-                name="Квартира"
-                value={flat}
-                onChange={setFlat}
-                autocomplete="off"
-              />
-            </span>
-          </div>
+          <span className={styles.items}>
+            <Input
+              type="text"
+              name="Населённый пункт"
+              value={city}
+              onChange={setCity}
+              autocomplete="off"
+            />
+          </span>
+          <span className={styles.items}>
+            <Input
+              type="text"
+              name="Улица"
+              value={street}
+              onChange={setStreet}
+              autocomplete="off"
+            />
+            <Input
+              type="text"
+              name="Дом"
+              value={houseNumber}
+              onChange={setHouseNumber}
+              autocomplete="off"
+            />
+          </span>
+          <span className={styles.items}>
+            <Input
+              type="text"
+              name="Корпус"
+              value={block}
+              onChange={setBlock}
+              autocomplete="off"
+            />
+            <Input
+              type="text"
+              name="Подъезд"
+              value={entrance}
+              onChange={setEntrance}
+              autocomplete="off"
+            />
+          </span>
+          <span className={styles.items}>
+            <Input
+              type="text"
+              name="Этаж"
+              value={floor}
+              onChange={setFloor}
+              autocomplete="off"
+            />
+            <Input
+              type="text"
+              name="Квартира"
+              value={flat}
+              onChange={setFlat}
+              autocomplete="off"
+            />
+          </span>
 
           <div className={styles.buttons}>
             <button

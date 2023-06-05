@@ -14,6 +14,7 @@ import {
   BasketItemType,
   BasketType,
   CurrentUser,
+  CurrentUserData,
   OrderProductType,
   OrderType,
   ProductType,
@@ -66,6 +67,13 @@ const initialState: UserSlice = {
       address: emptyAddress,
       status: "WAITING",
     },
+    userData: {
+      firstName: "",
+      lastName: "",
+      middleName: "",
+      phoneNumber: "",
+      gender: "",
+    }
   },
   isLoading: false,
 };
@@ -438,6 +446,18 @@ export const fetchOrder = createAsyncThunk<
   return order;
 });
 
+export const saveUserData = createAsyncThunk<
+  CurrentUserData,
+  CurrentUserData,
+  { state: RootState }
+>("user/saveUserData", async (props, { getState, rejectWithValue }) => {
+  const userUID = getState().user.currentUser.uid;
+
+  await UpdateProfileInfo(userUID, { userData: props });
+
+  return props;
+});
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -627,7 +647,15 @@ const userSlice = createSlice({
       })
       .addCase(fetchOrder.rejected, (state, action) => {
         state.isLoading = false;
-      });
+      })
+
+      .addCase(saveUserData.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(saveUserData.fulfilled, (state, action) => {
+        state.currentUser.userData = action.payload;
+        state.isLoading = false;
+      })
   },
 });
 

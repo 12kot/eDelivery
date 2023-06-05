@@ -37,6 +37,7 @@ export type AuthUser = {
   uid: string;
   token: string;
   currentAddress: AddressType;
+  userData: CurrentUserData;
 };
 
 export type CurrentUser = {
@@ -49,7 +50,16 @@ export type CurrentUser = {
   currentAddress: AddressType;
   history: OrderType[];
   openedOrder: OrderType;
+  userData: CurrentUserData;
 };
+
+export type CurrentUserData = {
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  phoneNumber: string;
+  gender: "MALE" | "FEMALE" | "LAMINAT" | "";
+}
 
 export type FavoriteType = {
   products: ProductType[];

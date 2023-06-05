@@ -18,7 +18,7 @@
   width: fit-content;
 }
 
-.coolinput input.input {
+.coolinput select {
   padding: 11px 10px;
   font-size: 0.9rem;
   border: 2px #b1aeae solid;
@@ -26,6 +26,6 @@
   background: #fff;
 }
 
-.coolinput.readOnly input.input {
+.coolinput.readOnly select {
   background-color: #f3f3f3 !important;
 }

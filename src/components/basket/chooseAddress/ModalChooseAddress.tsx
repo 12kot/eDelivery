@@ -1,5 +1,6 @@
 import React, { Dispatch, ReactElement, SetStateAction, useState } from "react";
 import styles from "components/commonObjects/modalStyles/ModalStyles.module.css";
+import itemsStyles from "./Modal.module.css";
 import { useAppSelector } from "hooks/hooks";
 import Address from "components/profile/profile/adresses/address/Address";
 import { v4 } from "uuid";
@@ -16,8 +17,8 @@ const ModalChooseAddress = (props: Props): ReactElement => {
 
   const getAddresses = (): ReactElement[] => {
     return addresses.map((address) => (
-      <span className={styles.item} key={v4()}>
-        <Address address={address} />
+      <span key={v4()}>
+        <Address address={address} key={v4()}/>
       </span>
     ));
   };
@@ -35,7 +36,7 @@ const ModalChooseAddress = (props: Props): ReactElement => {
         <div className={styles.content}>
           <h3>Выберите адрес доставки</h3>
 
-          <div className={styles.items}>
+          <div className={itemsStyles.items}>
             {addresses.length === 0 ? "Адреса отсутствуют" : getAddresses()}
           </div>
           <div className={styles.buttons}>

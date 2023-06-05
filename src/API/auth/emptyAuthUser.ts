@@ -14,4 +14,11 @@ export const emptyAuthUser: AuthUser = {
     flat: "",
     id: "",
   },
+  userData: {
+    firstName: "",
+    lastName: "",
+    middleName: "",
+    phoneNumber: "",
+    gender: "",
+  }
 };
