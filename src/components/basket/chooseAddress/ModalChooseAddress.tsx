@@ -37,7 +37,7 @@ const ModalChooseAddress = (props: Props): ReactElement => {
           <h3>Выберите адрес доставки</h3>
 
           <div className={itemsStyles.items}>
-            {addresses.length === 0 ? "Адреса отсутствуют" : getAddresses()}
+            {addresses.length === 0 ? <p style={{alignSelf: "center"}}>Адреса отсутствуют</p> : getAddresses()}
           </div>
           <div className={styles.buttons}>
             <button
