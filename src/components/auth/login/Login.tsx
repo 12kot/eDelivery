@@ -46,7 +46,7 @@ const Login = (): ReactElement => {
             <Input
               name="Введите пароль"
               type="password"
-              value={password}
+              value={password.trim()}
               onChange={setPassword}
               autocomplete="current-password"
             />

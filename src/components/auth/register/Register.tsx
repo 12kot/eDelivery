@@ -48,7 +48,7 @@ const Register = (): ReactElement => {
             <Input
               name="Введите пароль"
               type="password"
-              value={password}
+              value={password.trim()}
               onChange={setPassword}
               autocomplete="new-password"
             />
@@ -57,7 +57,7 @@ const Register = (): ReactElement => {
             <Input
               name="Повторите пароль"
               type="password"
-              value={repeatPassword}
+              value={repeatPassword.trim()}
               onChange={setRepeatPassword}
               autocomplete="new-password"
             />

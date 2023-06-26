@@ -26,6 +26,7 @@ import { v4 } from "uuid";
 import UpdateProfileInfo from "API/DB/UpdateProfileInfo";
 import GetUserData from "API/DB/GetUserData";
 import editItem from "API/realtimeDB/editItem";
+import AuthValidate from "functions/AuthValidate";
 
 type UserSlice = {
   currentUser: CurrentUser;
@@ -73,12 +74,12 @@ const initialState: UserSlice = {
       middleName: "",
       phoneNumber: "",
       gender: "",
-    }
+    },
   },
   isLoading: false,
 };
 
-const _getItems = async (productsID: number[]) => {
+const _getItems = async (productsID: number[]): Promise<ProductType[]> => {
   let products: ProductType[] = [];
 
   for (const item of productsID) {
@@ -186,14 +187,14 @@ export const loginUserByGoogle = createAsyncThunk<
   undefined,
   { state: RootState }
 >("user/loginUserByGoogle", async (_, { dispatch, rejectWithValue }) => {
-  let data: AuthUser = await LoginByGoogle();
-  if (data.email) {
-    await CreateUser(data);
-    dispatch(fetchUserData(data));
+  let data: {data: AuthUser, error: Error | null} = await LoginByGoogle();
+  if (!data.error) {
+    await CreateUser(data.data);
+    dispatch(fetchUserData(data.data));
     return;
   }
 
-  return rejectWithValue("Error");
+  return rejectWithValue(data.error.message);
 });
 
 export const loginUserByEmail = createAsyncThunk<
@@ -201,13 +202,19 @@ export const loginUserByEmail = createAsyncThunk<
   { email: string; password: string },
   { state: RootState }
 >("user/loginUserByEmail", async (props, { dispatch, rejectWithValue }) => {
-  let data: AuthUser = await LoginByEmail(props.email, props.password);
-  if (data.email) {
-    dispatch(fetchUserData(data));
+  props.email = props.email.trim();
+  const validate = new AuthValidate(props.email, props.password);
+  if (!validate.EmailValidator() || !validate.PassValidator)
+    return rejectWithValue(validate.GetErrorMessage());
+
+  let data: {data: AuthUser, error: Error | null} = await LoginByEmail(props.email, props.password);
+
+  if (!data.error) {
+    dispatch(fetchUserData(data.data));
     return;
   }
 
-  return rejectWithValue("Error");
+  return rejectWithValue(data.error.message);
 });
 
 export const createUserWithEmail = createAsyncThunk<
@@ -215,19 +222,32 @@ export const createUserWithEmail = createAsyncThunk<
   { email: string; password: string; repeatPassword: string },
   { state: RootState }
 >("user/createUserWithEmail", async (props, { dispatch, rejectWithValue }) => {
-  //ВАЛИДАЦИЯ
-  let data: AuthUser = await CreateWithEmailAndPassword(
+  props.email = props.email.trim();
+
+  const validate = new AuthValidate(
+    props.email,
+    props.password,
+    props.repeatPassword
+  );
+  if (
+    !validate.EmailValidator() ||
+    !validate.PassValidator() ||
+    !validate.RepeatPassValidator()
+  )
+    return rejectWithValue(validate.GetErrorMessage());
+
+  let data: {data: AuthUser, error: Error | null} = await CreateWithEmailAndPassword(
     props.email,
     props.password
   );
 
-  if (data.email) {
-    await CreateUser(data);
-    dispatch(fetchUserData(data));
+  if (!data.error) {
+    await CreateUser(data.data);
+    dispatch(fetchUserData(data.data));
     return;
   }
 
-  return rejectWithValue("Error");
+  return rejectWithValue(data.error.message);
 });
 
 export const logoutUser = createAsyncThunk<void>(
@@ -274,11 +294,11 @@ export const handleBasketProduct = createAsyncThunk<
   );
 
   if (!product[0]) {
-    return rejectWithValue("Error");
+    return rejectWithValue("Не удалось найти продукт. Повторите попытку позже");
   }
 
   if (product[0].quantity <= 0 && props.type === "PLUS") {
-    return rejectWithValue("Error");
+    return rejectWithValue("Извините, данный продукт закончился");
   }
 
   if (props.type === "PLUS") product[0].quantity = --product[0].quantity;
@@ -320,8 +340,8 @@ export const handleAddress = createAsyncThunk<
 >(
   "user/handleAddress",
   async (props, { getState, rejectWithValue, dispatch }) => {
-    if (!props.city || !props.street || !props.houseNumber) {
-      return rejectWithValue("Введены не все данные");
+    if (!props.city.trim() || !props.street.trim() || !props.houseNumber.trim()) {
+      return rejectWithValue("Введены не все данные обязетельные данные");
     }
 
     const userUID = getState().user.currentUser.uid;
@@ -368,8 +388,8 @@ export const createOrder = createAsyncThunk<
   async (props, { getState, dispatch, rejectWithValue }) => {
     const userUID = getState().user.currentUser.uid;
 
-    if (!!!getState().user.currentUser.currentAddress.id)
-      return rejectWithValue("");
+    if (!getState().user.currentUser.currentAddress.id)
+      return rejectWithValue("Выберите адрес доставки");
 
     dispatch(fetchUserBasket());
     dispatch(fetchUserHistory());
@@ -441,7 +461,7 @@ export const fetchOrder = createAsyncThunk<
     props.id
   );
 
-  if (!order) return rejectWithValue("Error");
+  if (!order) return rejectWithValue("Заказ не найден. Повторите попытку");
 
   return order;
 });
@@ -450,11 +470,10 @@ export const saveUserData = createAsyncThunk<
   CurrentUserData,
   CurrentUserData,
   { state: RootState }
->("user/saveUserData", async (props, { getState, rejectWithValue }) => {
+>("user/saveUserData", async (props, { getState }) => {
   const userUID = getState().user.currentUser.uid;
 
   await UpdateProfileInfo(userUID, { userData: props });
-
   return props;
 });
 
@@ -475,6 +494,8 @@ const userSlice = createSlice({
         state.currentUser = initialState.currentUser;
         localStorage.clear();
         state.isLoading = false;
+
+        alert(action.payload);
       })
 
       .addCase(fetchUserFavorite.fulfilled, (state, action) => {
@@ -501,6 +522,7 @@ const userSlice = createSlice({
       })
       .addCase(loginUserByGoogle.rejected, (state, action) => {
         state.isLoading = false;
+        alert(action.payload)
       })
 
       .addCase(loginUserByEmail.pending, (state, action) => {
@@ -511,6 +533,8 @@ const userSlice = createSlice({
       })
       .addCase(loginUserByEmail.rejected, (state, action) => {
         state.isLoading = false;
+        console.log(action);
+        alert(action.payload);
       })
 
       .addCase(createUserWithEmail.pending, (state, action) => {
@@ -521,6 +545,7 @@ const userSlice = createSlice({
       })
       .addCase(createUserWithEmail.rejected, (state, action) => {
         state.isLoading = false;
+        alert(action.payload);
       })
 
       .addCase(logoutUser.fulfilled, (state) => {
@@ -578,6 +603,7 @@ const userSlice = createSlice({
       })
       .addCase(handleBasketProduct.rejected, (state, action) => {
         state.isLoading = false;
+        alert(action.payload)
       })
 
       .addCase(handleAddress.pending, (state, action) => {
@@ -596,6 +622,7 @@ const userSlice = createSlice({
       })
       .addCase(handleAddress.rejected, (state, action) => {
         state.isLoading = false;
+        alert(action.payload);
       })
 
       .addCase(deleteAddress.pending, (state, action) => {
@@ -624,6 +651,7 @@ const userSlice = createSlice({
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.isLoading = false;
+        alert(action.payload);
       })
 
       .addCase(handleOrderStatus.pending, (state, action) => {
@@ -647,6 +675,7 @@ const userSlice = createSlice({
       })
       .addCase(fetchOrder.rejected, (state, action) => {
         state.isLoading = false;
+        alert(action.payload);
       })
 
       .addCase(saveUserData.pending, (state, action) => {
@@ -655,7 +684,7 @@ const userSlice = createSlice({
       .addCase(saveUserData.fulfilled, (state, action) => {
         state.currentUser.userData = action.payload;
         state.isLoading = false;
-      })
+      });
   },
 });
 

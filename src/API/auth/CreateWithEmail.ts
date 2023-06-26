@@ -6,12 +6,13 @@ import { emptyAuthUser } from "./emptyAuthUser";
 const CreateWithEmailAndPassword = async (
   email: string,
   password: string
-): Promise<AuthUser> => {
+): Promise<{data: AuthUser, error: Error | null}> => {
   const user: AuthUser = emptyAuthUser;
+  let error: Error | null = null;
 
-  const response = await createUserWithEmailAndPassword(auth, email, password);
   
   try {
+    const response = await createUserWithEmailAndPassword(auth, email, password);
     if (response.user.email) {
       user.email = response.user.email;
       user.uid = response.user.uid;
@@ -19,11 +20,11 @@ const CreateWithEmailAndPassword = async (
 
       localStorage.setItem("user", JSON.stringify(user));
     }
-  } catch (error) {
-    console.error(error);
+  } catch (e) {
+    error = e as Error;
   }
 
-  return user;
+  return {data: user, error: error};
 };
 
 export default CreateWithEmailAndPassword;
