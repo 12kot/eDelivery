@@ -5,7 +5,7 @@ import Input from "ui/input/Input";
 import { useAppDispatch } from "hooks/hooks";
 import { saveUserData } from "store/slices/userSlice";
 
-import { PhoneInput } from "react-international-phone";
+import { PhoneInput, usePhoneValidation } from "react-international-phone";
 import "react-international-phone/style.css";
 import Select from "ui/select/Select";
 
@@ -24,11 +24,20 @@ const EditData = (props: Props): ReactElement => {
   );
   const [gender, setGender] = useState(props.user.userData.gender);
   const dispatch = useAppDispatch();
+  const phoneValidation = usePhoneValidation(phoneNumber);
 
-  const handleSaveData = () => {
+  const handleSaveData = (): void => {
     props.setIsActive(false);
     dispatch(
-      saveUserData({ firstName, lastName, middleName, phoneNumber, gender })
+      saveUserData({
+        firstName,
+        lastName,
+        middleName,
+        phoneNumber: phoneValidation.isValid
+          ? phoneNumber
+          : props.user.userData.phoneNumber,
+        gender,
+      })
     );
   };
 

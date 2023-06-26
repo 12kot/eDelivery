@@ -1,5 +1,5 @@
 import React, { ReactElement, useState, useEffect } from "react";
-import styles from "./Addreses.module.css";
+import styles from "./Addresses.module.css";
 import Address from "./address/Address";
 import { v4 } from "uuid";
 import { useAppDispatch, useAppSelector } from "hooks/hooks";
