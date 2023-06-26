@@ -4,6 +4,7 @@ import styles from "./Menu.module.css";
 
 type Props = {
   userEmail: string;
+  userName: string;
 };
 
 const Menu = (props: Props): ReactElement => {
@@ -12,7 +13,7 @@ const Menu = (props: Props): ReactElement => {
       <div className={styles.mail_container}>
         <div className={styles.mail_content}>
           <h5>Здравствуйте</h5>
-          <h5>{props.userEmail}</h5>
+          <h5>{props.userName ? props.userName : props.userEmail}</h5>
         </div>
       </div>
       <NavLink to="/profile" className={styles.menu_item}>

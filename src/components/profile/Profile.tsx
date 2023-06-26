@@ -9,7 +9,7 @@ const Profile = (): ReactElement => {
 
   return (
     <div className={styles.container}>
-      <Menu userEmail={user.email} />
+      <Menu userEmail={user.email} userName={user.userData.firstName} />
       <div className={styles.content}>
         <Outlet />
       </div>
