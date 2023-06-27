@@ -11,10 +11,11 @@ import { v4 } from "uuid";
 import styles from "./Basket.module.css";
 import Loader from "ui/loader/Loader";
 import Address from "components/profile/profile/adresses/address/Address";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import ModalChooseAddress from "./chooseAddress/ModalChooseAddress";
 
 const Basket = (): ReactElement => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const products: ProductType[] = useAppSelector(
     (state) => state.user.currentUser.basket.products
@@ -58,6 +59,7 @@ const Basket = (): ReactElement => {
 
   const handleCreateOrder = (): void => {
     dispatch(createOrder({ price: getPrice() }));
+    navigate("/profile/history")
   };
 
   return (

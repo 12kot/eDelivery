@@ -646,7 +646,7 @@ const userSlice = createSlice({
       })
       .addCase(createOrder.fulfilled, (state, action) => {
         state.currentUser.basket = initialState.currentUser.basket;
-        state.currentUser.history.push(action.payload);
+        //state.currentUser.history.push(action.payload);
         state.isLoading = false;
       })
       .addCase(createOrder.rejected, (state, action) => {

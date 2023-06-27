@@ -11,6 +11,7 @@ import ProductsSwiper from "components/main/products/ProductsSwiper";
 import { handleFavoriteProduct } from "store/slices/userSlice";
 import ProductActionsButtons from "components/commonObjects/productActionsButtons/ProductActionsButtons";
 import Heart from "ui/Heart";
+import NotFound from "./notFoundPage/NotFound";
 
 const Product = (): ReactElement => {
   const dispatch = useAppDispatch();
@@ -18,7 +19,9 @@ const Product = (): ReactElement => {
 
   const { currentProduct, isLoading } = useAppSelector((state) => state.app);
   const products = useAppSelector((state) => state.app.products.products);
-  const favoriteItems = useAppSelector((state) => state.user.currentUser.favorite.items);
+  const favoriteItems = useAppSelector(
+    (state) => state.user.currentUser.favorite.items
+  );
 
   useEffect(() => {
     if (id) dispatch(fetchProductData({ id: id }));
@@ -26,14 +29,15 @@ const Product = (): ReactElement => {
       dispatch(
         fetchCollectionProductsData({
           equalKey: "category",
-          equalValue: category,
+          equalValue: currentProduct?.category ? currentProduct.category : category,
           count: 15,
         })
       );
-  }, [category, id, dispatch]);
+  }, [category, id, dispatch, currentProduct?.category]);
 
   const isFavorite = () => {
-    for (const product of favoriteItems) if (product.toString() === id) return true;
+    for (const product of favoriteItems)
+      if (product.toString() === id) return true;
 
     return false;
   };
@@ -111,7 +115,10 @@ const Product = (): ReactElement => {
               />
               <div className={styles.mobile_menu}>
                 <div className={styles.mobile_basket}>
-                  <ProductActionsButtons product={currentProduct} favorite={false} />
+                  <ProductActionsButtons
+                    product={currentProduct}
+                    favorite={false}
+                  />
                 </div>
                 <div
                   className={
@@ -127,7 +134,7 @@ const Product = (): ReactElement => {
               </div>
             </>
           ) : (
-            <h2>Продукт не найден</h2>
+           <NotFound />
           )}
         </>
       )}
