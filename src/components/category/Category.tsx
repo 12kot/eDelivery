@@ -10,6 +10,7 @@ import {
 import ProductItem from "components/main/products/productItem/ProductItem";
 import { v4 } from "uuid";
 import Loader from "ui/loader/Loader";
+import NotFound from "components/product/notFoundPage/NotFound";
 
 type MyParams = {
   category: string;
@@ -18,9 +19,8 @@ type MyParams = {
 const Category = (): ReactElement => {
   const { category } = useParams<keyof MyParams>() as MyParams;
   const [numberOfProducts, setNumberOfProducts] = useState(3);
-  const { products, currentCategory, totalNumberOfItems, isLoading } = useAppSelector(
-    (state) => state.app
-  );
+  const { products, currentCategory, totalNumberOfItems, isLoading } =
+    useAppSelector((state) => state.app);
 
   const dispatch = useAppDispatch();
 
@@ -32,7 +32,8 @@ const Category = (): ReactElement => {
       equalKey = "isDiscount";
       equalValue = true;
     }
-
+    
+    dispatch(fetchCategoryData({ category: category }));
     dispatch(
       fetchCollectionProductsData({
         equalKey: equalKey,
@@ -43,7 +44,6 @@ const Category = (): ReactElement => {
     dispatch(
       fetchNumberOfItems({ equalKey: equalKey, equalValue: equalValue })
     );
-    dispatch(fetchCategoryData({ category: category }));
   }, [category, numberOfProducts, dispatch]);
 
   const getProducts = (): ReactElement[] => {
@@ -83,7 +83,9 @@ const Category = (): ReactElement => {
           </div>
         </div>
       ) : (
-        <h2>Категория не найдена</h2>
+        <div className={styles.container}>
+          <NotFound />
+        </div>
       )}
     </div>
   );

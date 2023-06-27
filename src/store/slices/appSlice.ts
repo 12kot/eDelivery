@@ -62,13 +62,37 @@ export const fetchCollectionProductsData = createAsyncThunk<
   ProductType[],
   { equalKey: string; equalValue: string | boolean | null; count: number }
 >("app/fetchCollectionData", async (props) => {
-  const data: ProductType[] = await getItemsDB(
+  let data: ProductType[] = [];
+
+  if (props.equalValue && props.equalKey !== "isDiscount") {
+    const items: number[] = await getItemsDB(
+      `products/${props.equalValue}`,
+      props.equalKey,
+      null,
+      props.count
+    );
+
+    for (const id of items) {
+      const item: ProductType[] = await getItemsDB(
+        "products/products",
+        "id",
+        id,
+        1
+      );
+      
+      if(item[0].id) data.push(item[0]);
+    }
+    
+    return Object.values(data);
+  }
+
+  data = await getItemsDB(
     "products/products",
     props.equalKey,
     props.equalValue,
     props.count
-  );
-
+    );
+    
   return Object.values(data);
 });
 
@@ -129,7 +153,7 @@ export const fetchNumberOfSearchItems = createAsyncThunk<
 const appSlice = createSlice({
   name: "app",
   initialState,
-  reducers: { },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchCollectionCategoriesData.pending, (state, action) => {

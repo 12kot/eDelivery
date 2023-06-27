@@ -7,7 +7,7 @@
   margin: 24px 0 0;
   display: flex;
   flex-direction: column;
-  padding: 0 0 3vh 0;
+  padding: 0 0 3vh;
 }
 
 .container h2 {
@@ -101,7 +101,7 @@
 
 @media screen and (max-width: 960px) {
   .container {
-    padding: 0 0 17vh 0;
+    padding: 0 0 17vh;
   }
 
   .content {

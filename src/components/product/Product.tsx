@@ -25,15 +25,16 @@ const Product = (): ReactElement => {
 
   useEffect(() => {
     if (id) dispatch(fetchProductData({ id: id }));
+    
     if (category)
       dispatch(
         fetchCollectionProductsData({
           equalKey: "category",
-          equalValue: currentProduct?.category ? currentProduct.category : category,
+          equalValue: category,
           count: 15,
         })
       );
-  }, [category, id, dispatch, currentProduct?.category]);
+  }, [category, id, dispatch]);
 
   const isFavorite = () => {
     for (const product of favoriteItems)
@@ -134,7 +135,7 @@ const Product = (): ReactElement => {
               </div>
             </>
           ) : (
-           <NotFound />
+            <NotFound />
           )}
         </>
       )}
