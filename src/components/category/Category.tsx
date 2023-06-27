@@ -32,7 +32,7 @@ const Category = (): ReactElement => {
       equalKey = "isDiscount";
       equalValue = true;
     }
-    
+
     dispatch(fetchCategoryData({ category: category }));
     dispatch(
       fetchCollectionProductsData({
@@ -47,6 +47,7 @@ const Category = (): ReactElement => {
   }, [category, numberOfProducts, dispatch]);
 
   const getProducts = (): ReactElement[] => {
+    debugger
     if (products.products) {
       return products.products.map((product) => (
         <ProductItem product={product} key={v4()} />
@@ -58,7 +59,7 @@ const Category = (): ReactElement => {
   return (
     <div>
       {isLoading ? <Loader /> : <></>}
-      {currentCategory ? (
+      {currentCategory?.category ? (
         <div className={styles.container}>
           <NavLink to="/" className={styles.back_home}>
             <p>{`<---`} Вернуться назад</p>

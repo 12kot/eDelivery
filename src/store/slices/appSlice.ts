@@ -153,7 +153,7 @@ export const fetchNumberOfSearchItems = createAsyncThunk<
 const appSlice = createSlice({
   name: "app",
   initialState,
-  reducers: {},
+  reducers: { },
   extraReducers: (builder) => {
     builder
       .addCase(fetchCollectionCategoriesData.pending, (state, action) => {
@@ -164,12 +164,8 @@ const appSlice = createSlice({
         state.isLoading = false;
       })
 
-      .addCase(fetchCategoryData.pending, (state, action) => {
-        state.isLoading = true;
-      })
       .addCase(fetchCategoryData.fulfilled, (state, action) => {
         state.currentCategory = action.payload;
-        state.isLoading = false;
       })
 
       .addCase(fetchCollectionProductsData.pending, (state, action) => {
