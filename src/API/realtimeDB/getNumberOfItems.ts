@@ -3,21 +3,14 @@ import {
   ref,
   get,
   query,
-  orderByChild,
-  equalTo,
 } from "firebase/database";
 
 const getNumberOfItems = async (
-  path: string,
-  equalKey: string | null,
-  equalValue: string | boolean | null | number
+  path: string
 ): Promise<number> => {
   let data: number = 0;
   const db = getDatabase();
   let q = query(ref(db, path));
-
-  if (equalValue && equalKey)
-    q = query(ref(db, path), orderByChild(equalKey), equalTo(equalValue));
 
   const snapshot = await get(q);
   

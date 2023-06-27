@@ -11,7 +11,7 @@ import ProductsSwiper from "components/main/products/ProductsSwiper";
 import { handleFavoriteProduct } from "store/slices/userSlice";
 import ProductActionsButtons from "components/commonObjects/productActionsButtons/ProductActionsButtons";
 import Heart from "ui/Heart";
-import NotFound from "./notFoundPage/NotFound";
+import NotFound from "../notFoundPage/NotFound";
 
 const Product = (): ReactElement => {
   const dispatch = useAppDispatch();

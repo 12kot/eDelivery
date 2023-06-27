@@ -64,7 +64,7 @@ export const fetchCollectionProductsData = createAsyncThunk<
 >("app/fetchCollectionData", async (props) => {
   let data: ProductType[] = [];
 
-  if (props.equalValue && props.equalKey !== "isDiscount") {
+  if (props.equalValue) {
     const items: number[] = await getItemsDB(
       `products/${props.equalValue}`,
       props.equalKey,
@@ -115,9 +115,7 @@ export const fetchNumberOfItems = createAsyncThunk<
   { equalKey: string; equalValue: string | boolean }
 >("app/fetchNumberOfItems", async (props) => {
   const count: number = await getNumberItems(
-    "products/products",
-    props.equalKey,
-    props.equalValue
+    `products/${props.equalValue}`
   );
 
   return count;
@@ -176,12 +174,8 @@ const appSlice = createSlice({
         state.isLoading = false;
       })
 
-      .addCase(fetchProductData.pending, (state, action) => {
-        state.isLoading = true;
-      })
       .addCase(fetchProductData.fulfilled, (state, action) => {
         state.currentProduct = action.payload;
-        state.isLoading = false;
       })
 
       .addCase(fetchNumberOfItems.fulfilled, (state, action) => {

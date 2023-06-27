@@ -10,7 +10,7 @@ import {
 import ProductItem from "components/main/products/productItem/ProductItem";
 import { v4 } from "uuid";
 import Loader from "ui/loader/Loader";
-import NotFound from "components/product/notFoundPage/NotFound";
+import NotFound from "components/notFoundPage/NotFound";
 
 type MyParams = {
   category: string;
@@ -25,24 +25,16 @@ const Category = (): ReactElement => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    let equalKey = "category",
-      equalValue: string | boolean = category;
-
-    if (category === "discounts") {
-      equalKey = "isDiscount";
-      equalValue = true;
-    }
-
     dispatch(fetchCategoryData({ category: category }));
     dispatch(
       fetchCollectionProductsData({
-        equalKey: equalKey,
-        equalValue: equalValue,
+        equalKey: "categoty",
+        equalValue: category,
         count: numberOfProducts,
       })
     );
     dispatch(
-      fetchNumberOfItems({ equalKey: equalKey, equalValue: equalValue })
+      fetchNumberOfItems({ equalKey: "category", equalValue: category })
     );
   }, [category, numberOfProducts, dispatch]);
 
