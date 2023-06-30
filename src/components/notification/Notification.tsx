@@ -9,12 +9,7 @@ const Notification = (): ReactElement => {
 
   const type = useAppSelector((state) => state.notifications.type);
 
-  useEffect(() => {
-    console.log(type);
-  });
-
   const getStyle = (): string => {
-    console.log(type);
     switch (type) {
       case "ERROR":
         return styles.error;
