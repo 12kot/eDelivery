@@ -1,7 +1,7 @@
 .container {
   position: fixed;
   box-sizing: border-box;
-  bottom: 61px;
+  bottom: 5px;
   background-color: blueviolet;
   width: 280px;
   min-height: 75px;
@@ -45,4 +45,10 @@
 
 .error:hover {
   background-color: #ff9d9d;
+}
+
+@media screen and (max-width: 960px) {
+  .container {
+    bottom: 61px;
+  }
 }

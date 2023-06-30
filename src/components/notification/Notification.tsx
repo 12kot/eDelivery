@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from "react";
+import React, { ReactElement } from "react";
 import styles from "./Notification.module.css";
 import { useAppSelector } from "hooks/hooks";
 
