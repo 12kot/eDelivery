@@ -2,17 +2,16 @@
   position: fixed;
   box-sizing: border-box;
   bottom: 5px;
-  background-color: blueviolet;
   width: 280px;
-  min-height: 75px;
+  min-height: fit-content;
   border-radius: 10px;
-  padding: 5px 8px;
+  padding: 8px 12px;
 
   word-wrap: break-word;
 
   display: flex;
   flex-direction: column;
-  column-gap: 6px;
+  row-gap: 4px;
   font-size: 14px;
 
   transition: 0.15s;

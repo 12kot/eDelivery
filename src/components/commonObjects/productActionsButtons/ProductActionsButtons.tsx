@@ -16,20 +16,21 @@ type Props = {
 const ProductActionsButtons = (props: Props): ReactElement => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  
   const isLoggedIn: boolean = !!useAppSelector(
     (state) => state.user.currentUser.email
   );
   const favoriteItems = useAppSelector(
-    (state) => state.user.currentUser.favorite.items
+    (state) => state.user.currentUser.favorite
   );
   const basketItems = useAppSelector(
-    (state) => state.user.currentUser.basket.items
+    (state) => state.user.currentUser.basket
   );
   const isLoading = useAppSelector((state) => state.user.isLoading);
   let count = 0;
 
   const isFavorite = (): boolean => {
-    for (let item of favoriteItems) if (item === props.product.id) return true;
+    for (let item of favoriteItems.items) if (item === props.product.id) return true;
 
     return false;
   };
@@ -41,7 +42,7 @@ const ProductActionsButtons = (props: Props): ReactElement => {
   };
 
   const inBasket = (): boolean => {
-    for (let item of basketItems)
+    for (let item of basketItems.items)
       if (item.id === props.product.id) {
         count = item.count;
         return true;

@@ -186,11 +186,6 @@ export const fetchUserData = createAsyncThunk<
     return rejectWithValue("");
   }
 
-  dispatch(fetchUserFavorite());
-  dispatch(fetchUserBasket());
-  dispatch(fetchUserAddresses());
-  dispatch(fetchUserHistory());
-
   return user as AuthUser;
 });
 
@@ -203,6 +198,7 @@ export const loginUserByGoogle = createAsyncThunk<
   if (!data.error) {
     await CreateUser(data.data);
     dispatch(fetchUserData(data.data));
+    dispatch(fetchUserAddresses());
 
     return;
   }
@@ -244,6 +240,7 @@ export const loginUserByEmail = createAsyncThunk<
 
   if (!data.error) {
     dispatch(fetchUserData(data.data));
+    dispatch(fetchUserAddresses());
     return;
   }
 
@@ -276,9 +273,12 @@ export const createUserWithEmail = createAsyncThunk<
     !validate.PassValidator() ||
     !validate.RepeatPassValidator()
   ) {
-
     dispatch(
-      _notify({ type: "ERROR", header: "Неудача", description: validate.GetErrorMessage(), })
+      _notify({
+        type: "ERROR",
+        header: "Неудача",
+        description: validate.GetErrorMessage(),
+      })
     );
     return rejectWithValue("");
   }
@@ -293,7 +293,11 @@ export const createUserWithEmail = createAsyncThunk<
   }
 
   dispatch(
-    _notify({ type: "ERROR", header: "Неудача", description: data.error.message, })
+    _notify({
+      type: "ERROR",
+      header: "Неудача",
+      description: data.error.message,
+    })
   );
   return rejectWithValue("");
 });
@@ -333,59 +337,73 @@ export const handleBasketProduct = createAsyncThunk<
   { type: string; basketItem: BasketItemType },
   { basketItem: BasketItemType; type: string },
   { state: RootState }
->("user/handleBasketProduct", async (props, { getState, rejectWithValue, dispatch }) => {
-  const product: ProductType[] = await getItemsDB(
-    "products/products",
-    "id",
-    props.basketItem.id,
-    1
-  );
-
-  if (!product[0]) {
-    dispatch(
-      _notify({ type: "ERROR", header: "Неудача", description: "Не удалось найти продукт. Повторите попытку позже", })
+>(
+  "user/handleBasketProduct",
+  async (props, { getState, rejectWithValue, dispatch }) => {
+    const product: ProductType[] = await getItemsDB(
+      "products/products",
+      "id",
+      props.basketItem.id,
+      1
     );
-    return rejectWithValue("");
-  }
 
-  if (product[0].quantity <= 0 && props.type === "PLUS") {
-    dispatch(
-      _notify({ type: "ERROR", header: "Выбранный продукт закончился", description: "Извините, данный продукт закончился. Но совсем скоро он появится на нашем складе", })
-    );
-    return rejectWithValue("");
-  }
-
-  if (props.type === "PLUS") product[0].quantity = --product[0].quantity;
-  else product[0].quantity = ++product[0].quantity;
-  await editItem(product[0].id, { quantity: product[0].quantity });
-
-  const userUID = getState().user.currentUser.uid;
-  const isExists: ProductType = await FindDocInCollection(
-    userUID,
-    "basket",
-    "id",
-    props.basketItem.id
-  );
-
-  if (!!isExists) {
-    if (props.basketItem.count === 0) {
-      await DeleteDoc(userUID, "basket", props.basketItem.id.toString());
-      return { type: "REMOVE", basketItem: props.basketItem };
+    if (!product[0]) {
+      dispatch(
+        _notify({
+          type: "ERROR",
+          header: "Неудача",
+          description: "Не удалось найти продукт. Повторите попытку позже",
+        })
+      );
+      return rejectWithValue("");
     }
 
-    await UpdateDoc(userUID, "basket", props.basketItem.id.toString(), {
+    console.log(props.basketItem.count)
+    if ((product[0].quantity <= 0 && props.type === "PLUS") || props.basketItem.count < 0) {
+      dispatch(
+        _notify({
+          type: "ERROR",
+          header: "Выбранный продукт закончился",
+          description:
+            "Извините, данный продукт закончился. Но совсем скоро он появится на нашем складе",
+        })
+      );
+      return rejectWithValue("");
+    }
+
+    if (props.type === "PLUS") product[0].quantity = --product[0].quantity;
+    else product[0].quantity = ++product[0].quantity;
+    await editItem(product[0].id, { quantity: product[0].quantity });
+
+    const userUID = getState().user.currentUser.uid;
+    const isExists: ProductType = await FindDocInCollection(
+      userUID,
+      "basket",
+      "id",
+      props.basketItem.id
+    );
+
+    if (!!isExists) {
+      if (props.basketItem.count === 0) {
+        await DeleteDoc(userUID, "basket", props.basketItem.id.toString());
+        return { type: "REMOVE", basketItem: props.basketItem };
+      }
+
+      await UpdateDoc(userUID, "basket", props.basketItem.id.toString(), {
+        count: props.basketItem.count,
+      });
+
+      return { type: "SET_COUNT", basketItem: props.basketItem };
+    }
+
+    await SetDoc(userUID, "basket", props.basketItem.id.toString(), {
+      id: props.basketItem.id,
       count: props.basketItem.count,
     });
 
-    return { type: "SET_COUNT", basketItem: props.basketItem };
+    return { type: "ADD", basketItem: props.basketItem };
   }
-
-  await SetDoc(userUID, "basket", props.basketItem.id.toString(), {
-    id: props.basketItem.id,
-    count: props.basketItem.count,
-  });
-  return { type: "ADD", basketItem: props.basketItem };
-});
+);
 
 export const handleAddress = createAsyncThunk<
   AddressType,
@@ -399,9 +417,12 @@ export const handleAddress = createAsyncThunk<
       !props.street.trim() ||
       !props.houseNumber.trim()
     ) {
-      
       dispatch(
-        _notify({ type: "ERROR", header: "Неудача", description: "Введены не все обязательные данные", })
+        _notify({
+          type: "ERROR",
+          header: "Неудача",
+          description: "Введены не все обязательные данные",
+        })
       );
       return rejectWithValue("");
     }
@@ -478,14 +499,14 @@ export const createOrder = createAsyncThunk<
     for (const item of getState().user.currentUser.basket.items)
       await DeleteDoc(userUID, "basket", item.id.toString());
 
-    
-      dispatch(
-        _notify({
-          type: "SUCCESS",
-          header: "Заказ собран",
-          description: "Заказ успешно собран. Подтвердите правильность в истории заказов",
-        })
-      );
+    dispatch(
+      _notify({
+        type: "SUCCESS",
+        header: "Заказ собран",
+        description:
+          "Заказ успешно собран. Подтвердите правильность в истории заказов",
+      })
+    );
     return order;
   }
 );
@@ -542,7 +563,11 @@ export const fetchOrder = createAsyncThunk<
 
   if (!order) {
     dispatch(
-      _notify({ type: "ERROR", header: "Неудача", description: "Заказ не найден. Повторите попытку", })
+      _notify({
+        type: "ERROR",
+        header: "Неудача",
+        description: "Заказ не найден. Повторите попытку",
+      })
     );
     return rejectWithValue("");
   }
@@ -604,7 +629,7 @@ const userSlice = createSlice({
       })
 
       .addCase(fetchUserBasket.fulfilled, (state, action) => {
-        state.currentUser.basket = action.payload;
+        state.currentUser.basket = { ...action.payload };
       })
 
       .addCase(fetchUserHistory.fulfilled, (state, action) => {

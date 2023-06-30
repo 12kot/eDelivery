@@ -1,8 +1,10 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect } from "react";
 import styles from "./ProductsSwiper.module.css";
 import ProductItem from "./productItem/ProductItem";
 import { ProductType } from "types/types";
 import { v4 } from "uuid";
+import { useAppDispatch } from "hooks/hooks";
+import { fetchUserBasket, fetchUserFavorite } from "store/slices/userSlice";
 
 // import { Mousewheel, FreeMode } from "swiper";
 // import { Swiper, SwiperSlide } from "swiper/react";
@@ -18,7 +20,14 @@ type Props = {
 };
 
 const ProductsSwiper = (props: Props): ReactElement => {
-  
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUserBasket());
+    dispatch(fetchUserFavorite());
+  }, [dispatch]);
+
+
   const getProducts = (): ReactElement[] => {
     if (props.products) {
       return props.products.map((product) => (

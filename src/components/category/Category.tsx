@@ -39,7 +39,6 @@ const Category = (): ReactElement => {
   }, [category, numberOfProducts, dispatch]);
 
   const getProducts = (): ReactElement[] => {
-    debugger
     if (products.products) {
       return products.products.map((product) => (
         <ProductItem product={product} key={v4()} />
