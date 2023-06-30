@@ -15,6 +15,7 @@ import {
   BasketType,
   CurrentUser,
   CurrentUserData,
+  NotificationsType,
   OrderProductType,
   OrderType,
   ProductType,
@@ -27,6 +28,7 @@ import UpdateProfileInfo from "API/DB/UpdateProfileInfo";
 import GetUserData from "API/DB/GetUserData";
 import editItem from "API/realtimeDB/editItem";
 import AuthValidate from "functions/AuthValidate";
+import { hideNotifications, setNotification } from "./notificationsSlice";
 
 type UserSlice = {
   currentUser: CurrentUser;
@@ -172,7 +174,17 @@ export const fetchUserData = createAsyncThunk<
   { state: RootState }
 >("user/fetchUserData", async function (props, { dispatch, rejectWithValue }) {
   const user: AuthUser | undefined = await GetUserData(props.uid);
-  if (!user?.uid) return rejectWithValue("Пользователь не найден");
+  if (!user?.uid) {
+    dispatch(
+      _notify({
+        type: "ERROR",
+        header: "Время сессии истекло",
+        description: "Авторизуйтесь заново",
+      })
+    );
+
+    return rejectWithValue("");
+  }
 
   dispatch(fetchUserFavorite());
   dispatch(fetchUserBasket());
@@ -187,14 +199,23 @@ export const loginUserByGoogle = createAsyncThunk<
   undefined,
   { state: RootState }
 >("user/loginUserByGoogle", async (_, { dispatch, rejectWithValue }) => {
-  let data: {data: AuthUser, error: Error | null} = await LoginByGoogle();
+  let data: { data: AuthUser; error: Error | null } = await LoginByGoogle();
   if (!data.error) {
     await CreateUser(data.data);
     dispatch(fetchUserData(data.data));
+
     return;
   }
 
-  return rejectWithValue(data.error.message);
+  dispatch(
+    _notify({
+      type: "ERROR",
+      header: "Неудача",
+      description: data.error.message,
+    })
+  );
+
+  return rejectWithValue("");
 });
 
 export const loginUserByEmail = createAsyncThunk<
@@ -204,17 +225,37 @@ export const loginUserByEmail = createAsyncThunk<
 >("user/loginUserByEmail", async (props, { dispatch, rejectWithValue }) => {
   props.email = props.email.trim();
   const validate = new AuthValidate(props.email, props.password);
-  if (!validate.EmailValidator() || !validate.PassValidator)
-    return rejectWithValue(validate.GetErrorMessage());
+  if (!validate.EmailValidator() || !validate.PassValidator) {
+    dispatch(
+      _notify({
+        type: "ERROR",
+        header: "Неудача",
+        description: validate.GetErrorMessage(),
+      })
+    );
 
-  let data: {data: AuthUser, error: Error | null} = await LoginByEmail(props.email, props.password);
+    return rejectWithValue("");
+  }
+
+  let data: { data: AuthUser; error: Error | null } = await LoginByEmail(
+    props.email,
+    props.password
+  );
 
   if (!data.error) {
     dispatch(fetchUserData(data.data));
     return;
   }
 
-  return rejectWithValue(data.error.message);
+  dispatch(
+    _notify({
+      type: "ERROR",
+      header: "Неудача",
+      description: data.error.message,
+    })
+  );
+
+  return rejectWithValue("");
 });
 
 export const createUserWithEmail = createAsyncThunk<
@@ -229,17 +270,21 @@ export const createUserWithEmail = createAsyncThunk<
     props.password,
     props.repeatPassword
   );
+
   if (
     !validate.EmailValidator() ||
     !validate.PassValidator() ||
     !validate.RepeatPassValidator()
-  )
-    return rejectWithValue(validate.GetErrorMessage());
+  ) {
 
-  let data: {data: AuthUser, error: Error | null} = await CreateWithEmailAndPassword(
-    props.email,
-    props.password
-  );
+    dispatch(
+      _notify({ type: "ERROR", header: "Неудача", description: validate.GetErrorMessage(), })
+    );
+    return rejectWithValue("");
+  }
+
+  let data: { data: AuthUser; error: Error | null } =
+    await CreateWithEmailAndPassword(props.email, props.password);
 
   if (!data.error) {
     await CreateUser(data.data);
@@ -247,7 +292,10 @@ export const createUserWithEmail = createAsyncThunk<
     return;
   }
 
-  return rejectWithValue(data.error.message);
+  dispatch(
+    _notify({ type: "ERROR", header: "Неудача", description: data.error.message, })
+  );
+  return rejectWithValue("");
 });
 
 export const logoutUser = createAsyncThunk<void>(
@@ -285,7 +333,7 @@ export const handleBasketProduct = createAsyncThunk<
   { type: string; basketItem: BasketItemType },
   { basketItem: BasketItemType; type: string },
   { state: RootState }
->("user/handleBasketProduct", async (props, { getState, rejectWithValue }) => {
+>("user/handleBasketProduct", async (props, { getState, rejectWithValue, dispatch }) => {
   const product: ProductType[] = await getItemsDB(
     "products/products",
     "id",
@@ -294,11 +342,17 @@ export const handleBasketProduct = createAsyncThunk<
   );
 
   if (!product[0]) {
-    return rejectWithValue("Не удалось найти продукт. Повторите попытку позже");
+    dispatch(
+      _notify({ type: "ERROR", header: "Неудача", description: "Не удалось найти продукт. Повторите попытку позже", })
+    );
+    return rejectWithValue("");
   }
 
   if (product[0].quantity <= 0 && props.type === "PLUS") {
-    return rejectWithValue("Извините, данный продукт закончился");
+    dispatch(
+      _notify({ type: "ERROR", header: "Выбранный продукт закончился", description: "Извините, данный продукт закончился. Но совсем скоро он появится на нашем складе", })
+    );
+    return rejectWithValue("");
   }
 
   if (props.type === "PLUS") product[0].quantity = --product[0].quantity;
@@ -340,8 +394,16 @@ export const handleAddress = createAsyncThunk<
 >(
   "user/handleAddress",
   async (props, { getState, rejectWithValue, dispatch }) => {
-    if (!props.city.trim() || !props.street.trim() || !props.houseNumber.trim()) {
-      return rejectWithValue("Введены не все данные обязетельные данные");
+    if (
+      !props.city.trim() ||
+      !props.street.trim() ||
+      !props.houseNumber.trim()
+    ) {
+      
+      dispatch(
+        _notify({ type: "ERROR", header: "Неудача", description: "Введены не все обязательные данные", })
+      );
+      return rejectWithValue("");
     }
 
     const userUID = getState().user.currentUser.uid;
@@ -388,8 +450,17 @@ export const createOrder = createAsyncThunk<
   async (props, { getState, dispatch, rejectWithValue }) => {
     const userUID = getState().user.currentUser.uid;
 
-    if (!getState().user.currentUser.currentAddress.id)
-      return rejectWithValue("Выберите адрес доставки");
+    if (!getState().user.currentUser.currentAddress.id) {
+      dispatch(
+        _notify({
+          type: "ERROR",
+          header: "Неудача",
+          description: "Выберите адрес доставки",
+        })
+      );
+
+      return rejectWithValue("");
+    }
 
     dispatch(fetchUserBasket());
     dispatch(fetchUserHistory());
@@ -407,6 +478,14 @@ export const createOrder = createAsyncThunk<
     for (const item of getState().user.currentUser.basket.items)
       await DeleteDoc(userUID, "basket", item.id.toString());
 
+    
+      dispatch(
+        _notify({
+          type: "SUCCESS",
+          header: "Заказ собран",
+          description: "Заказ успешно собран. Подтвердите правильность в истории заказов",
+        })
+      );
     return order;
   }
 );
@@ -451,7 +530,7 @@ export const fetchOrder = createAsyncThunk<
   OrderType,
   { id: number },
   { state: RootState }
->("user/fetchOrder", async (props, { getState, rejectWithValue }) => {
+>("user/fetchOrder", async (props, { getState, rejectWithValue, dispatch }) => {
   const userUID = getState().user.currentUser.uid;
 
   const order: OrderType = await FindDocInCollection(
@@ -461,7 +540,12 @@ export const fetchOrder = createAsyncThunk<
     props.id
   );
 
-  if (!order) return rejectWithValue("Заказ не найден. Повторите попытку");
+  if (!order) {
+    dispatch(
+      _notify({ type: "ERROR", header: "Неудача", description: "Заказ не найден. Повторите попытку", })
+    );
+    return rejectWithValue("");
+  }
 
   return order;
 });
@@ -476,6 +560,21 @@ export const saveUserData = createAsyncThunk<
   await UpdateProfileInfo(userUID, { userData: props });
   return props;
 });
+
+const _notify = createAsyncThunk<void, NotificationsType, { state: RootState }>(
+  "user/notify",
+  async (props, { dispatch }) => {
+    dispatch(
+      setNotification({
+        type: props.type,
+        header: props.header,
+        description: props.description,
+      })
+    );
+
+    setTimeout(() => dispatch(hideNotifications()), 3000);
+  }
+);
 
 const userSlice = createSlice({
   name: "user",
@@ -494,8 +593,6 @@ const userSlice = createSlice({
         state.currentUser = initialState.currentUser;
         localStorage.clear();
         state.isLoading = false;
-
-        alert(action.payload);
       })
 
       .addCase(fetchUserFavorite.fulfilled, (state, action) => {
@@ -522,7 +619,6 @@ const userSlice = createSlice({
       })
       .addCase(loginUserByGoogle.rejected, (state, action) => {
         state.isLoading = false;
-        alert(action.payload)
       })
 
       .addCase(loginUserByEmail.pending, (state, action) => {
@@ -533,8 +629,6 @@ const userSlice = createSlice({
       })
       .addCase(loginUserByEmail.rejected, (state, action) => {
         state.isLoading = false;
-        console.log(action);
-        alert(action.payload);
       })
 
       .addCase(createUserWithEmail.pending, (state, action) => {
@@ -545,7 +639,6 @@ const userSlice = createSlice({
       })
       .addCase(createUserWithEmail.rejected, (state, action) => {
         state.isLoading = false;
-        alert(action.payload);
       })
 
       .addCase(logoutUser.fulfilled, (state) => {
@@ -603,7 +696,6 @@ const userSlice = createSlice({
       })
       .addCase(handleBasketProduct.rejected, (state, action) => {
         state.isLoading = false;
-        alert(action.payload)
       })
 
       .addCase(handleAddress.pending, (state, action) => {
@@ -622,7 +714,6 @@ const userSlice = createSlice({
       })
       .addCase(handleAddress.rejected, (state, action) => {
         state.isLoading = false;
-        alert(action.payload);
       })
 
       .addCase(deleteAddress.pending, (state, action) => {
@@ -646,12 +737,10 @@ const userSlice = createSlice({
       })
       .addCase(createOrder.fulfilled, (state, action) => {
         state.currentUser.basket = initialState.currentUser.basket;
-        //state.currentUser.history.push(action.payload);
         state.isLoading = false;
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.isLoading = false;
-        alert(action.payload);
       })
 
       .addCase(handleOrderStatus.pending, (state, action) => {
@@ -675,7 +764,6 @@ const userSlice = createSlice({
       })
       .addCase(fetchOrder.rejected, (state, action) => {
         state.isLoading = false;
-        alert(action.payload);
       })
 
       .addCase(saveUserData.pending, (state, action) => {

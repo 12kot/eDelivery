@@ -1,14 +1,16 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userSlice from "./slices/userSlice";
 import appSlice from "./slices/appSlice";
+import notificationsSlice from "./slices/notificationsSlice";
 
 const rootReducer = combineReducers({
-    app: appSlice.reducer,
-    user: userSlice.reducer,
+  app: appSlice.reducer,
+  user: userSlice.reducer,
+  notifications: notificationsSlice.reducer,
 });
 
 const store = configureStore({
-    reducer: rootReducer,
+  reducer: rootReducer,
 });
 
 export default store;

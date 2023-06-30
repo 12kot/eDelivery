@@ -18,6 +18,7 @@ import Favorite from "components/profile/favorite/Favorite";
 import Basket from "components/basket/Basket";
 import History from "components/profile/history/History";
 import Order from "components/profile/history/orderPage/Order";
+import Notification from "components/notification/Notification";
 
 const App = () => {
   const userEmail = useAppSelector((state) => state.user.currentUser.email);
@@ -33,6 +34,7 @@ const App = () => {
   return (
     <div>
       <Header />
+      <Notification />
 
       <div className="content">
         <Routes>

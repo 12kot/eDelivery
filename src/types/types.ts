@@ -103,3 +103,9 @@ export type OrderProductType = {
   count: number;
   id: number;
 }
+
+export type NotificationsType = {
+  type: "ERROR" | "SUCCESS" | null;
+  header: string;
+  description: string;
+}
