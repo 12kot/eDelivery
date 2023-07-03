@@ -31,6 +31,11 @@
   max-height: 200px;
   
   object-fit: cover;
+  transition: 0.2s;
+}
+
+.image img:hover { 
+  scale: 1.06;
 }
 
 .content {

@@ -43,7 +43,7 @@ const Head = (): ReactElement => {
         </NavLink>
         <div className={`${styles.container_catalog}`}>
           <button className={`${styles.catalog} ${styles.item}`}>
-            <p>Каталог</p>
+            <p>Кнопка</p>
           </button>
           <input
             type="text"

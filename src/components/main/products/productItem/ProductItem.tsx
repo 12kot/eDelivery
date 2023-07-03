@@ -22,7 +22,7 @@ const ProductItem = (props: Props): ReactElement => {
           {inView ? (
             <img src={props.product.imageURL} alt={props.product.name} />
           ) : (
-            <img src="" alt=""></img>
+            <img src="" alt="" />
           )}
         </div>
         <div
