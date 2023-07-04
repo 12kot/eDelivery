@@ -23,8 +23,8 @@ const ProductsSwiper = (props: Props): ReactElement => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchUserBasket());
-    dispatch(fetchUserFavorite());
+    //dispatch(fetchUserBasket());
+    //dispatch(fetchUserFavorite());
   }, [dispatch]);
 
 
